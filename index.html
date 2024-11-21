@@ -8,7 +8,17 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <div id="usagi">{{ name }}颱風來啦</div>
+    <div id="app">
+      <div>
+        <label for="">台幣</label>
+        <input type="text" v-model="twd" />
+      </div>
+      <div>
+        <label for="">日幣</label>
+        <input type="text" v-model="jpy" />
+        <p>當前匯率為 {{ getExchangeRate("jpy") }}</p>
+      </div>
+    </div>
 
     <script type="module" src="./main.js"></script>
   </body>
