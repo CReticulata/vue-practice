@@ -7,6 +7,11 @@ const vm = createApp({
   data() {
     return {
       twd: 1000,
+      tempJpy: 0,
+      tempUsd: 0,
+      isDisabled: true,
+      isJpySetting: false,
+      isUsdSetting: false,
     };
   },
   methods: {
@@ -16,6 +21,9 @@ const vm = createApp({
         case "jpy":
           rate = 0.22;
           break;
+        case "usd":
+          rate = 31.5;
+          break;
       }
       return rate;
     },
@@ -23,13 +31,42 @@ const vm = createApp({
   computed: {
     jpy: {
       get() {
-        // console.dir(this);
-        return Number(Number(this.twd) / this.getExchangeRate("jpy")).toFixed(
+        let result;
+        if (this.isJpySetting) {
+          result = this.tempJpy;
+        } else {
+          result = Number(
+            Number(this.twd) / this.getExchangeRate("jpy")
+          ).toFixed(2);
+        }
+
+        this.isJpySetting = false;
+        return result;
+      },
+      set(value) {
+        this.isJpySetting = true;
+        this.tempJpy = value;
+        this.twd = Number(Number(value) * this.getExchangeRate("jpy")).toFixed(
           2
         );
       },
+    },
+    usd: {
+      get() {
+        let result;
+        if (this.isUsdSetting) {
+          result = this.tempUsd;
+        } else {
+          result = Number(
+            Number(this.twd) / this.getExchangeRate("usd")
+          ).toFixed(2);
+        }
+        return result;
+      },
       set(value) {
-        this.twd = Number(Number(value) * this.getExchangeRate("jpy")).toFixed(
+        this.isUsdSetting = true;
+        this.tempUsd = value;
+        this.twd = Number(Number(value) * this.getExchangeRate("usd")).toFixed(
           2
         );
       },

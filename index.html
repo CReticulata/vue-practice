@@ -18,13 +18,13 @@
         <input type="text" v-model="jpy" />
         <span>當前匯率為 {{ getExchangeRate("jpy") }}</span>
       </div>
+      <div>
+        <label for="">美金</label>
+        <input type="text" v-model="usd" />
+        <span>當前匯率為 {{ getExchangeRate("usd") }}</span>
+      </div>
+      <button v-bind:disabled="isDisabled">click me!</button>
     </div>
-    <div id="test1">
-      <p>總金額共{{ subtotalComputed }}元</p>
-      <p>總金額共{{ subtotalMethods() }}元</p>
-      {{ message }}
-    </div>
-
     <script type="module" src="./main.js"></script>
     <script type="module" src="./1-3_test1.js"></script>
   </body>
