@@ -16,10 +16,16 @@
       <div>
         <label for="">日幣</label>
         <input type="text" v-model="jpy" />
-        <p>當前匯率為 {{ getExchangeRate("jpy") }}</p>
+        <span>當前匯率為 {{ getExchangeRate("jpy") }}</span>
       </div>
+    </div>
+    <div id="test1">
+      <p>總金額共{{ subtotalComputed }}元</p>
+      <p>總金額共{{ subtotalMethods() }}元</p>
+      {{ message }}
     </div>
 
     <script type="module" src="./main.js"></script>
+    <script type="module" src="./1-3_test1.js"></script>
   </body>
 </html>

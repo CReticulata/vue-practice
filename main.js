@@ -7,7 +7,6 @@ const vm = createApp({
   data() {
     return {
       twd: 1000,
-      message: "沒事就想講講話",
     };
   },
   methods: {
@@ -17,9 +16,6 @@ const vm = createApp({
         case "jpy":
           rate = 0.22;
           break;
-
-        default:
-          break;
       }
       return rate;
     },
@@ -27,11 +23,15 @@ const vm = createApp({
   computed: {
     jpy: {
       get() {
-        console.dir(this);
-        return Number(this.twd) / getExchangeRate("jpy");
+        // console.dir(this);
+        return Number(Number(this.twd) / this.getExchangeRate("jpy")).toFixed(
+          2
+        );
       },
       set(value) {
-        this.twd = Number(value) * getExchangeRate("jpy");
+        this.twd = Number(Number(value) * this.getExchangeRate("jpy")).toFixed(
+          2
+        );
       },
     },
   },
