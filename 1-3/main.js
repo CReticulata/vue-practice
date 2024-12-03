@@ -42,6 +42,9 @@ const vm = createApp({
 
         this.isJpySetting = false;
         return result;
+        // return this.tempJpy || Number(
+        //   Number(this.twd) / this.getExchangeRate("jpy")
+        // ).toFixed(2);
       },
       set(value) {
         this.isJpySetting = true;
