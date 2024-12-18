@@ -54,6 +54,18 @@
 
       <div v-text="rawContent"></div>
       <div v-html="rawContent"></div>
+
+      <input
+        type="text"
+        v-model.trim="title"
+        v-bind:class="{ error: isError }"
+      />
+
+      <input
+        type="text"
+        v-model.trim="title"
+        v-bind:style="{ fontSize: fontSize, display: ['-webkit-box', '-ms-flexbox', 'flex'] }"
+      />
     </div>
     <script type="module" src="./main.js"></script>
   </body>

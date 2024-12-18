@@ -9,7 +9,14 @@ const vm = createApp({
       contact: "hi",
       selected: "請選擇",
       rawContent: "<h1>Happy happy happy</h1>",
+      title: "",
+      fontSize: "30px",
     };
+  },
+  computed: {
+    isError: function () {
+      return this.title.length > 10;
+    },
   },
   // methods: {
   //   selectAll() {
