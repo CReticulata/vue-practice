@@ -40,6 +40,20 @@
         <!-- v-on:input="selectAll()" -->
         <label for="contactChoice4">All</label>
       </div>
+
+      <!-- 注意，v-model 要放在 select 而不是 option -->
+      <select v-model="selected">
+        <option disabled>請選擇</option>
+        <option>台北市</option>
+        <option>新北市</option>
+        <option>基隆市</option>
+      </select>
+
+      <p>Selected: {{ selected || '未選擇' }}</p>
+      <p v-once>Selected: {{ selected || '未選擇' }}</p>
+
+      <div v-text="rawContent"></div>
+      <div v-html="rawContent"></div>
     </div>
     <script type="module" src="./main.js"></script>
   </body>

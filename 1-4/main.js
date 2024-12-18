@@ -7,6 +7,8 @@ const vm = createApp({
   data() {
     return {
       contact: "hi",
+      selected: "請選擇",
+      rawContent: "<h1>Happy happy happy</h1>",
     };
   },
   // methods: {
