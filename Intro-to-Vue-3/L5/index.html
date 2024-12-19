@@ -28,8 +28,11 @@
               <div v-for="variant in variants" :key="variant.id">
                 <a>{{ variant.color }}</a>
               </div>
-              <div v-for="size in sizes">{{ size }}</div>
             </div>
+            <ul>
+              <li v-for="({ size }, index) in sizes">{{ index }} {{ size }}</li>
+            </ul>
+            <span v-for="n in 10">{{ n }}</span>
           </div>
         </div>
       </div>
