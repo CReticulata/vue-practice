@@ -33,10 +33,18 @@
             >
               {{ variant.color }}
             </div>
-            <button class="button" v-on:click="addToCart">Add to Cart</button>
+            <button class="button" @click="addToCart">Add to Cart</button>
             <button class="button" @click="removeFromCart">
               <span> Remove from Cart </span>
             </button>
+
+            <div @click.prevent.self="parentSay" class="parent">
+              父元素
+              <a href="https://www.example.com" @click="childSay" class="child"
+                >子元素</a
+              >
+            </div>
+            <div @click.ctrl="saySomething">Hi</div>
           </div>
         </div>
       </div>

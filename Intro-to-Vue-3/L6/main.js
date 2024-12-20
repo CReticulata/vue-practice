@@ -16,11 +16,21 @@ const app = Vue.createApp({
     updateImage(variantImage) {
       this.image = variantImage;
     },
-    addToCart() {
+    addToCart(event) {
       this.cart++;
+      console.log(event.type);
     },
     removeFromCart() {
       if (this.cart >= 1) this.cart--;
+    },
+    parentSay() {
+      console.log("父元素！");
+    },
+    childSay() {
+      console.log("子元素！");
+    },
+    saySomething() {
+      console.log("這是怎樣");
     },
   },
 });

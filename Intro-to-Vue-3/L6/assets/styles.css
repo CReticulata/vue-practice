@@ -181,3 +181,7 @@ ul {
     width: 90%;
   }
 }
+
+.parent {
+  cursor: pointer;
+}
