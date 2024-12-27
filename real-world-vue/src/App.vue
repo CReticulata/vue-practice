@@ -1,29 +1,43 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+// import EventCard from './components/EventCard.vue'
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink :to="{ name: 'EventList' }">Events</RouterLink>
+        <RouterLink :to="{ name: 'About' }">About</RouterLink>
       </nav>
     </div>
   </header>
 
-  <RouterView />
+  <!-- <transition :name="$route.meta.transitionName" >
+    <RouterView />
+  </transition> -->
+  <main>
+    <RouterView v-slot="{ Component }">
+      <transition :name="$route.meta.transitionName">
+        <Component class="absolute" :is="Component" />
+      </transition>
+    </RouterView>
+  </main>
 </template>
 
-<style scoped>
+<!-- <style scoped> -->
+<style>
+#app {
+  overflow: hidden;
+}
+
 header {
   line-height: 1.5;
   max-height: 100vh;
+  justify-content: center;
 }
 
 .logo {
@@ -56,11 +70,18 @@ nav a:first-of-type {
   border: 0;
 }
 
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* width: 100%; */
+}
+
 @media (min-width: 1024px) {
   header {
     display: flex;
     place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+    /* padding-right: calc(var(--section-gap) / 2); */
   }
 
   .logo {
@@ -74,12 +95,80 @@ nav a:first-of-type {
   }
 
   nav {
-    text-align: left;
-    margin-left: -1rem;
+    /* text-align: left; */
+    /* margin-left: -1rem; */
     font-size: 1rem;
 
     padding: 1rem 0;
-    margin-top: 1rem;
+    margin-top: 0;
   }
+}
+
+main {
+  min-width: calc(100vw / 2);
+  position: relative;
+  height: 80vh;
+}
+
+.events {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+h1 {
+  margin: 20px 0;
+
+  width: 100%;
+  text-align: center;
+}
+
+h4 {
+  font-size: 20px;
+}
+
+/* .slide-enter-active,
+.slide-leave-active {
+  transition: all 0.5s;
+}
+.slide-enter-from {
+  transform: translateX(100px);
+}
+.slide-leave-to {
+  transform: translateX(-100px);
+} */
+
+.absolute {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.leftToRight-enter-active,
+.leftToRight-leave-active {
+  transition: all 0.5s ease-out;
+}
+
+.leftToRight-enter-from {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+.leftToRight-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
+
+.rightToLeft-enter-active,
+.rightToLeft-leave-active {
+  transition: all 0.5s;
+}
+.rightToLeft-enter-from {
+  opacity: 0;
+  transform: translateX(100px);
+}
+.rightToLeft-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
 }
 </style>
