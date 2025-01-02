@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import EventListView from '../views/EventListView.vue'
 import EventDetails from '../views/EventDetails.vue'
 import AboutView from '../views/AboutView.vue'
+import NotFoundComponent from '../views/NotFoundComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,11 @@ const router = createRouter({
       // component: () => import('../views/AboutView.vue'),
       component: AboutView,
       meta: { transitionName: 'rightToLeft' },
+    },
+    {
+      path: '/:pathMatch(.*)',
+      name: 'NotFound',
+      component: NotFoundComponent,
     },
   ],
 })

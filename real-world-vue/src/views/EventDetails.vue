@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import EventService from '../services/EventService.js'
+import { useRouter } from 'vue-router'
 
 const event = ref(null)
 
@@ -12,12 +13,23 @@ const props = defineProps({
   },
 })
 
+const router = useRouter()
+
 EventService.getEvent(props.id)
   .then((response) => {
     console.log('Get response successfully.')
+    console.log(response)
     event.value = response.data
   })
-  .catch((error) => console.log(error))
+  .catch((error) => {
+    // console.log(error)
+    console.log(error.status)
+
+    if (error.status === 404) {
+      router.push({ path: '/not-found' })
+      // router.push({ name: 'NotFound', params: { pathMatch: 'NotFound' } })
+    }
+  })
 </script>
 
 <template>
