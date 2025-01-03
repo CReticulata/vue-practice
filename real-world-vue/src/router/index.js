@@ -11,13 +11,19 @@ const router = createRouter({
       path: '/',
       name: 'EventList',
       component: EventListView,
+      // props: (route) => {
+      //   return {
+      //     page: parseInt(route.query.page) || 1,
+      //   }
+      // },
+      props: (route) => ({ page: parseInt(route.query.page) || 1 }),
       meta: { transitionName: 'leftToRight' },
     },
     {
       path: '/event/:id',
       name: 'EventDetails',
-      props: true,
       component: EventDetails,
+      props: true,
       meta: { transitionName: 'rightToLeft' },
     },
     {
