@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import EventListView from '../views/EventListView.vue'
-import EventDetails from '../views/EventDetails.vue'
+import EventLayout from '../views/Event/Layout.vue'
+import EventDetails from '../views/Event/Details.vue'
+import EventRegister from '../views/Event/Register.vue'
+import EventEdit from '../views/Event/Edit.vue'
 import AboutView from '../views/AboutView.vue'
 import NotFoundComponent from '../views/NotFoundComponent.vue'
 
@@ -20,11 +23,36 @@ const router = createRouter({
       meta: { transitionName: 'leftToRight' },
     },
     {
-      path: '/event/:id',
-      name: 'EventDetails',
-      component: EventDetails,
+      path: '/events/:id',
+      name: 'EventLayout',
+      component: EventLayout,
       props: true,
       meta: { transitionName: 'rightToLeft' },
+      children: [
+        {
+          path: '',
+          name: 'EventDetails',
+          component: EventDetails,
+        },
+        {
+          path: 'register',
+          name: 'EventRegister',
+          component: EventRegister,
+        },
+        {
+          path: 'edit',
+          name: 'EventEdit',
+          component: EventEdit,
+        },
+      ],
+    },
+    {
+      path: '/event/:afterEvent(.*)',
+      redirect: (to) => {
+        return {
+          path: `/events/${to.params.afterEvent}`,
+        }
+      },
     },
     {
       path: '/about',

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import EventService from '../services/EventService.js'
-import { useRouter } from 'vue-router'
+import EventService from '../../services/EventService.js'
+import { useRouter, useRoute, RouterLink, RouterView } from 'vue-router'
 
 const event = ref(null)
 
@@ -30,31 +30,30 @@ EventService.getEvent(props.id)
       // router.push({ name: 'NotFound', params: { pathMatch: 'NotFound' } })
     }
   })
+
+const route = useRoute()
+
+function isActive() {
+  return true
+}
 </script>
 
 <template>
   <div class="event-detail" v-if="event">
     <h1>{{ event.title }}</h1>
-    <p>{{ event.time }} on {{ event.date }} @ {{ event.location }}</p>
-    <p>{{ event.description }}</p>
+    <div class="nav">
+      <RouterLink :to="{ name: 'EventDetails' }">Details</RouterLink>
+      |
+      <RouterLink :to="{ name: 'EventRegister' }">Register</RouterLink>
+      |
+      <RouterLink :to="{ name: 'EventEdit' }">Edit</RouterLink>
+    </div>
+
+    <RouterView :event="event" />
   </div>
 </template>
 
 <style scoped>
-.event-card {
-  padding: 20px;
-  width: 250px;
-  cursor: pointer;
-  border: 1px solid #39495c;
-  margin-bottom: 18px;
-  transition: transform 0.2s;
-}
-
-.event-card:hover {
-  transform: scale(1.01);
-  box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.2);
-}
-
 .event-detail {
   display: flex;
   flex-direction: column;
@@ -66,5 +65,26 @@ EventService.getEvent(props.id)
   .event-detail {
     justify-content: center;
   }
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: 0 0 20px;
+}
+
+.nav a {
+  color: var(--color-text);
+}
+
+.nav a:hover {
+  color: hsla(160, 100%, 37%, 1);
+  background-color: transparent;
+}
+
+.nav a.router-link-exact-active {
+  color: hsla(160, 100%, 37%, 1);
 }
 </style>
