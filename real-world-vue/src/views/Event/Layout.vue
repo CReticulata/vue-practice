@@ -23,12 +23,18 @@ EventService.getEvent(props.id)
   })
   .catch((error) => {
     // console.log(error)
-    console.log(error.status)
+    console.log(error)
 
     if (error.status === 404) {
-      router.push({ path: '/not-found' })
+      router.push({ name: '404Resource', params: { resource: props.id } })
       // router.push({ name: 'NotFound', params: { pathMatch: 'NotFound' } })
+    } else {
+      router.push({ name: 'NetworkError' })
     }
+    // 本來以為要找到network error的代碼，但影片直接用else處理了
+    // else if (error.code === "ERR_NETWORK") {
+    //   router.push({ name: 'NetworkError'})
+    // }
   })
 
 const route = useRoute()

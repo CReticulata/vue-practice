@@ -3,9 +3,11 @@
 import { ref, watch, watchEffect, computed } from 'vue'
 import EventCard from '../components/EventCard.vue'
 import EventService from '../services/EventService.js'
+import { useRouter } from 'vue-router'
 
 const events = ref(null)
 const totalEvents = ref(0)
+const router = useRouter()
 
 const props = defineProps({
   page: {
@@ -31,7 +33,11 @@ watch(
         events.value = response.data
         totalEvents.value = response.headers['x-total-count']
       })
-      .catch((error) => console.log(error))
+      .catch((error) => {
+        console.log(error)
+
+        router.push({ name: 'NetworkError' })
+      })
   },
   { immediate: true },
 )
