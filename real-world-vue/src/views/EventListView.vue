@@ -5,10 +5,14 @@ import EventCard from '../components/EventCard.vue'
 import EventService from '../services/EventService.js'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
 // import NProgress from 'nprogress'
+import { inject } from 'vue'
 
-const events = ref(null)
-const totalEvents = ref(0)
-const router = useRouter()
+// const event = ref(null)
+const GStore = inject('GStore')
+
+// const events = ref(null)
+// const totalEvents = ref(0)
+// const router = useRouter()
 
 const props = defineProps({
   page: {
@@ -18,7 +22,7 @@ const props = defineProps({
 })
 
 const hasNextPage = computed(() => {
-  const totalPages = Math.ceil(totalEvents.value / 2)
+  const totalPages = Math.ceil(GStore.totalEvents / 2)
   return props.page < totalPages
 })
 
@@ -72,33 +76,33 @@ const hasNextPage = computed(() => {
 //       })
 // }
 
-EventService.getEvents(2, props.page)
-  .then((response) => {
-    // NProgress.start()
-    console.log('Get response successfully.')
+// EventService.getEvents(2, props.page)
+//   .then((response) => {
+//     // NProgress.start()
+//     console.log('Get response successfully.')
 
-    events.value = response.data
-    totalEvents.value = response.headers['x-total-count']
-  })
-  .catch((error) => {
-    console.log(error)
+//     events.value = response.data
+//     totalEvents.value = response.headers['x-total-count']
+//   })
+//   .catch((error) => {
+//     console.log(error)
 
-    router.push({ name: 'NetworkError' })
-  })
+//     router.push({ name: 'NetworkError' })
+//   })
 // .finally(() => {
 //   NProgress.done()
 // })
 
 onBeforeRouteUpdate(async (routeTo) => {
   // NProgress.start()
-  events.value = null
+  GStore.events = null
 
   await EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
     .then((response) => {
       console.log('Get response successfully.')
 
-      events.value = response.data
-      totalEvents.value = response.headers['x-total-count']
+      GStore.events = response.data
+      GStore.totalEvents = response.headers['x-total-count']
     })
     .catch(() => {
       return { name: 'NetworkError' }
@@ -114,7 +118,7 @@ onBeforeRouteUpdate(async (routeTo) => {
     <!-- <TheWelcome /> -->
     <h1>Events for Good</h1>
     <div class="events">
-      <EventCard v-for="event in events" :key="event.id" :event="event" />
+      <EventCard v-for="event in GStore.events" :key="event.id" :event="event" />
       <div class="pagination">
         <RouterLink
           id="page-prev"

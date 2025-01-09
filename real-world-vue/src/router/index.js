@@ -18,6 +18,24 @@ const router = createRouter({
       path: '/',
       name: 'EventList',
       component: EventListView,
+      beforeEnter: async (to) => {
+        const page = to.query.page || 1
+
+        await EventService.getEvents(2, page)
+          .then((response) => {
+            // NProgress.start()
+            console.log(page)
+            console.log('Get response successfully.')
+
+            GStore.events = response.data
+            GStore.totalEvents = response.headers['x-total-count']
+          })
+          .catch((error) => {
+            console.log(error)
+
+            return { name: 'NetworkError' }
+          })
+      },
       // props: (route) => {
       //   return {
       //     page: parseInt(route.query.page) || 1,

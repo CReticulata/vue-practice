@@ -1,7 +1,7 @@
 <script setup>
 const props = defineProps({
   event: {
-    // 從???
+    // 從RouterView來
     type: Object,
     required: true,
   },
