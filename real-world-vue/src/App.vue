@@ -2,6 +2,9 @@
 import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 // import EventCard from './components/EventCard.vue'
+import { inject } from 'vue'
+
+const GStore = inject('GStore')
 </script>
 
 <template>
@@ -9,6 +12,9 @@ import { RouterLink, RouterView } from 'vue-router'
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
     <div class="wrapper">
+      <div id="flashMessage" v-if="GStore.flashMessage">
+        {{ GStore.flashMessage }}
+      </div>
       <nav>
         <RouterLink :to="{ name: 'EventList' }">Events</RouterLink>
         <RouterLink :to="{ name: 'About' }">About</RouterLink>
@@ -38,6 +44,22 @@ header {
   line-height: 1.5;
   max-height: 100vh;
   justify-content: center;
+}
+
+@keyframes yellowFade {
+  from {
+    background-color: hsla(160, 100%, 37%, 1);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+#flashMessage {
+  animation: yellowFade 3s;
+
+  position: absolute;
+  top: 20px;
 }
 
 .logo {
