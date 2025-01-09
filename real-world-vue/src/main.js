@@ -7,7 +7,8 @@ import App from './App.vue'
 import router from './router'
 import 'nprogress/nprogress.css'
 
-const GStore = reactive({ flashMessage: '' })
+// const GStore = reactive({ flashMessage: '' })
+import GStore from './stores/GStore'
 
 const app = createApp(App)
 

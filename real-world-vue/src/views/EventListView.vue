@@ -4,7 +4,7 @@ import { ref, watch, watchEffect, computed } from 'vue'
 import EventCard from '../components/EventCard.vue'
 import EventService from '../services/EventService.js'
 import { onBeforeRouteUpdate, useRouter } from 'vue-router'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
 
 const events = ref(null)
 const totalEvents = ref(0)
@@ -74,9 +74,9 @@ const hasNextPage = computed(() => {
 
 EventService.getEvents(2, props.page)
   .then((response) => {
-    NProgress.start()
+    // NProgress.start()
     console.log('Get response successfully.')
-    // console.log(response)
+
     events.value = response.data
     totalEvents.value = response.headers['x-total-count']
   })
@@ -85,25 +85,27 @@ EventService.getEvents(2, props.page)
 
     router.push({ name: 'NetworkError' })
   })
-  .finally(() => {
-    NProgress.done()
-  })
+// .finally(() => {
+//   NProgress.done()
+// })
 
 onBeforeRouteUpdate(async (routeTo) => {
-  NProgress.start()
+  // NProgress.start()
   events.value = null
 
-  EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+  await EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
     .then((response) => {
+      console.log('Get response successfully.')
+
       events.value = response.data
       totalEvents.value = response.headers['x-total-count']
     })
     .catch(() => {
       return { name: 'NetworkError' }
     })
-    .finally(() => {
-      NProgress.done()
-    })
+  // .finally(() => {
+  //   NProgress.done()
+  // })
 })
 </script>
 

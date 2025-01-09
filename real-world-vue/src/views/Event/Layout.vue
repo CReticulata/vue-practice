@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import EventService from '../../services/EventService.js'
-import { useRouter, useRoute, RouterLink, RouterView } from 'vue-router'
+// import EventService from '../../services/EventService.js'
+import { useRouter, RouterLink, RouterView } from 'vue-router'
+import { inject } from 'vue'
 
-const event = ref(null)
+// const event = ref(null)
+const GStore = inject('GStore')
 
 const props = defineProps({
   id: {
@@ -13,40 +15,34 @@ const props = defineProps({
   },
 })
 
-const router = useRouter()
+// const router = useRouter()
 
-EventService.getEvent(props.id)
-  .then((response) => {
-    console.log('Get response successfully.')
-    console.log(response)
-    event.value = response.data
-  })
-  .catch((error) => {
-    // console.log(error)
-    console.log(error)
+// EventService.getEvent(props.id)
+//   .then((response) => {
+//     console.log('Get response successfully.')
+//     console.log(response)
+//     event.value = response.data
+//   })
+//   .catch((error) => {
+//     // console.log(error)
+//     console.log(error)
 
-    if (error.status === 404) {
-      router.push({ name: '404Resource', params: { resource: props.id } })
-      // router.push({ name: 'NotFound', params: { pathMatch: 'NotFound' } })
-    } else {
-      router.push({ name: 'NetworkError' })
-    }
-    // 本來以為要找到network error的代碼，但影片直接用else處理了
-    // else if (error.code === "ERR_NETWORK") {
-    //   router.push({ name: 'NetworkError'})
-    // }
-  })
-
-const route = useRoute()
-
-function isActive() {
-  return true
-}
+//     if (error.status === 404) {
+//       router.push({ name: '404Resource', params: { resource: props.id } })
+//       // router.push({ name: 'NotFound', params: { pathMatch: 'NotFound' } })
+//     } else {
+//       router.push({ name: 'NetworkError' })
+//     }
+//     // 本來以為要找到network error的代碼，但影片直接用else處理了
+//     // else if (error.code === "ERR_NETWORK") {
+//     //   router.push({ name: 'NetworkError'})
+//     // }
+//   })
 </script>
 
 <template>
-  <div class="event-detail" v-if="event">
-    <h1>{{ event.title }}</h1>
+  <div class="event-detail" v-if="GStore.event">
+    <h1>{{ GStore.event.title }}</h1>
     <div class="nav">
       <RouterLink :to="{ name: 'EventDetails' }">Details</RouterLink>
       |
@@ -55,7 +51,7 @@ function isActive() {
       <RouterLink :to="{ name: 'EventEdit' }">Edit</RouterLink>
     </div>
 
-    <RouterView :event="event" />
+    <RouterView :event="GStore.event" />
   </div>
 </template>
 
