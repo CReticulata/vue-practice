@@ -3,7 +3,8 @@
 import { ref, watch, watchEffect, computed } from 'vue'
 import EventCard from '../components/EventCard.vue'
 import EventService from '../services/EventService.js'
-import { useRouter } from 'vue-router'
+import { onBeforeRouteUpdate, useRouter } from 'vue-router'
+import NProgress from 'nprogress'
 
 const events = ref(null)
 const totalEvents = ref(0)
@@ -22,25 +23,25 @@ const hasNextPage = computed(() => {
 })
 
 // 使用watch
-watch(
-  () => props.page,
-  (newPage) => {
-    events.value = null
-    EventService.getEvents(2, newPage)
-      .then((response) => {
-        console.log('Get response successfully.')
-        // console.log(response)
-        events.value = response.data
-        totalEvents.value = response.headers['x-total-count']
-      })
-      .catch((error) => {
-        console.log(error)
+// watch(
+//   () => props.page,
+//   (newPage) => {
+//     events.value = null
+//     EventService.getEvents(2, newPage)
+//       .then((response) => {
+//         console.log('Get response successfully.')
+//         // console.log(response)
+//         events.value = response.data
+//         totalEvents.value = response.headers['x-total-count']
+//       })
+//       .catch((error) => {
+//         console.log(error)
 
-        router.push({ name: 'NetworkError' })
-      })
-  },
-  { immediate: true },
-)
+//         router.push({ name: 'NetworkError' })
+//       })
+//   },
+//   { immediate: true },
+// )
 
 // 使用watchEffect
 // watchEffect(() => {
@@ -52,6 +53,58 @@ watch(
 //     })
 //     .catch((error) => console.log(error))
 // })
+
+// 使用guard
+// beforeRouteEnter(routeTo, routeFrom, next) {
+//     NProgress.start()
+//     EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+//       .then(response => {
+//         next(comp => {
+//           comp.events = response.data
+//           comp.totalEvents = response.headers['x-total-count']
+//         })
+//       })
+//       .catch(() => {
+//         next({ name: 'NetworkError' })
+//       })
+//       .finally(() => {
+//         NProgress.done()
+//       })
+// }
+
+EventService.getEvents(2, props.page)
+  .then((response) => {
+    NProgress.start()
+    console.log('Get response successfully.')
+    // console.log(response)
+    events.value = response.data
+    totalEvents.value = response.headers['x-total-count']
+  })
+  .catch((error) => {
+    console.log(error)
+
+    router.push({ name: 'NetworkError' })
+  })
+  .finally(() => {
+    NProgress.done()
+  })
+
+onBeforeRouteUpdate(async (routeTo) => {
+  NProgress.start()
+  events.value = null
+
+  EventService.getEvents(2, parseInt(routeTo.query.page) || 1)
+    .then((response) => {
+      events.value = response.data
+      totalEvents.value = response.headers['x-total-count']
+    })
+    .catch(() => {
+      return { name: 'NetworkError' }
+    })
+    .finally(() => {
+      NProgress.done()
+    })
+})
 </script>
 
 <template>
