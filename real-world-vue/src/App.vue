@@ -11,10 +11,10 @@ const GStore = inject('GStore')
   <header>
     <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
 
+    <div id="flashMessage" v-if="GStore.flashMessage">
+      {{ GStore.flashMessage }}
+    </div>
     <div class="wrapper">
-      <div id="flashMessage" v-if="GStore.flashMessage">
-        {{ GStore.flashMessage }}
-      </div>
       <nav>
         <RouterLink :to="{ name: 'EventList' }">Events</RouterLink>
         <RouterLink :to="{ name: 'About' }">About</RouterLink>
@@ -60,6 +60,10 @@ header {
 
   position: absolute;
   top: 20px;
+  right: 0;
+  left: 0;
+
+  text-align: center;
 }
 
 .logo {
