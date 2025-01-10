@@ -8,5 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <p>Edit the event here</p>
+  <div>
+    <p>Edit the event here</p>
+  </div>
 </template>

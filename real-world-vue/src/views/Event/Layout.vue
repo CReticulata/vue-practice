@@ -51,7 +51,13 @@ const props = defineProps({
       <RouterLink :to="{ name: 'EventEdit' }">Edit</RouterLink>
     </div>
 
-    <RouterView :event="GStore.event" />
+    <div class="relative">
+      <RouterView v-slot="{ Component, route }" :event="GStore.event">
+        <transition :name="route.meta.transitionName">
+          <Component :is="Component" class="absolute" />
+        </transition>
+      </RouterView>
+    </div>
   </div>
 </template>
 
@@ -88,5 +94,13 @@ const props = defineProps({
 
 .nav a.router-link-exact-active {
   color: hsla(160, 100%, 37%, 1);
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
 }
 </style>

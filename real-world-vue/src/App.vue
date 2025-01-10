@@ -26,8 +26,8 @@ const GStore = inject('GStore')
     <RouterView />
   </transition> -->
   <main>
-    <RouterView v-slot="{ Component }">
-      <transition :name="$route.meta.transitionName">
+    <RouterView v-slot="{ Component, route }">
+      <transition :name="route.meta.transitionName">
         <Component class="absolute" :is="Component" />
       </transition>
     </RouterView>

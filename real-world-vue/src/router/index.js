@@ -74,18 +74,25 @@ const router = createRouter({
           path: '',
           name: 'EventDetails',
           component: EventDetails,
+          meta: { transitionName: 'leftToRight' },
         },
         {
           path: 'register',
           name: 'EventRegister',
           component: EventRegister,
+          meta: { transitionName: 'rightToLeft' },
+          beforeEnter: (to, from) => {
+            if (from.name === 'EventEdit') {
+              to.meta.transitionName = 'leftToRight'
+            }
+          },
         },
         {
           path: 'edit',
           name: 'EventEdit',
           component: EventEdit,
           meta: {
-            requireAuth: true,
+            requireAuth: false,
           },
         },
       ],

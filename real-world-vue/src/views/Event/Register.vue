@@ -23,8 +23,10 @@ function register() {
 </script>
 
 <template>
-  <p>Register for the event here</p>
-  <button @click="register" class="btn-register">Register Me</button>
+  <div>
+    <p>Register for the event here</p>
+    <button @click="register" class="btn-register">Register Me</button>
+  </div>
 </template>
 
 <style scoped>
