@@ -5,6 +5,8 @@ import EventDetails from '../views/Event/Details.vue'
 import EventRegister from '../views/Event/Register.vue'
 import EventEdit from '../views/Event/Edit.vue'
 import AboutView from '../views/AboutView.vue'
+// lazy loading也可以寫成
+// const AboutView = () => import '../views/AboutView.vue'
 import NotFoundComponent from '../views/NotFoundComponent.vue'
 import NetworkError from '../views/NetworkError.vue'
 import NProgress from 'nprogress'
@@ -82,6 +84,9 @@ const router = createRouter({
           path: 'edit',
           name: 'EventEdit',
           component: EventEdit,
+          meta: {
+            requireAuth: true,
+          },
         },
       ],
     },
@@ -122,10 +127,33 @@ const router = createRouter({
       props: true,
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      // 要使用瀏覽器的上/下一頁才有作用
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  },
 })
 
-router.beforeEach(() => {
+router.beforeEach((to, from) => {
   NProgress.start()
+
+  const notAuthorized = true
+  if (to.meta.requireAuth && notAuthorized) {
+    GStore.flashMessage = '您無此權限瀏覽這個頁面'
+
+    setTimeout(() => {
+      GStore.flashMessage = ''
+    }, 3000)
+
+    if (from.href == null) {
+      return { path: '/' }
+    } else {
+      return false // 取消導向路徑
+    }
+  }
 })
 
 router.afterEach(() => {
