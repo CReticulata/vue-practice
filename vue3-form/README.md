@@ -1,6 +1,6 @@
 # form 表單
-- [source code](https://github.com/)
-- [demo](https://deepjavascript.github.io/)
+
+- [demo](https://vue-3-form.onrender.com/)
 
 ## 用 vite 做 form 表單：
 
@@ -15,7 +15,7 @@
 - email
 - password（明碼與密碼切換）
 - 體驗感受（range）
-- 備註（textarea 3行）
+- 備註（textarea 3 行）
 - 大頭貼（可預覽）
 - submit 跟 reset
 
