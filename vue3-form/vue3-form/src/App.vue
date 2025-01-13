@@ -27,9 +27,43 @@ const nowMinute = addLeadingZero(now.getMinutes())
 const time = ref(`${nowHour}:${nowMinute}`)
 
 const gender = ref('')
+
+const choices = ref(['Pokemon Sleep', 'Pokemon TCG', 'Pokemon TCG Pocket'])
+
 const hobbies = ref([])
 const showedHobbies = computed(() => {
   return hobbies.value.join(', ')
+})
+
+const inputHobby = ref(null)
+function addHobby() {
+  if (inputHobby.value == null) {
+    return
+  }
+
+  choices.value.push(inputHobby.value)
+  inputHobby.value = null
+}
+
+const tags = ref([])
+const inputTag = ref(null)
+function addTag() {
+  if (inputTag.value == null) {
+    return
+  }
+
+  tags.value.push(inputTag.value)
+  inputTag.value = null
+}
+
+function removeTag(event) {
+  const targetTag = event.target.dataset.tag
+  const indexOfTargetTag = tags.value.indexOf(targetTag)
+  tags.value.splice(indexOfTargetTag, 1)
+}
+
+const showedTags = computed(() => {
+  return tags.value.join(', ')
 })
 
 const regions = ref(['基隆市', '台北市', '新北市', '南部'])
@@ -75,7 +109,7 @@ function previewAvatar() {
   </header>
   <main>
     <!-- 放表單 -->
-    <form class="form">
+    <form class="form" @submit.prevent>
       <div class="input-text">
         <label for="name">請輸入姓名：</label>
         <input id="name" type="text" placeholder="橘子" v-model="name" />
@@ -105,29 +139,35 @@ function previewAvatar() {
       </fieldset>
       <fieldset class="input-radio">
         <legend>請選擇興趣：</legend>
-        <div class="input-choice">
-          <input id="Pokemon Sleep" type="checkbox" v-model="hobbies" value="Pokemon Sleep" />
-          <label for="Pokemon Sleep">Pokemon Sleep</label>
+        <div class="input-choice" v-for="(choice, index) in choices" :key="index">
+          <input :id="choice" type="checkbox" v-model="hobbies" :value="choice" />
+          <label :for="choice">{{ choice }}</label>
         </div>
-        <div class="input-choice">
-          <input id="Pokemon TCG" type="checkbox" v-model="hobbies" value="Pokemon TCG" />
-          <label for="Pokemon TCG">Pokemon TCG</label>
-        </div>
-        <div class="input-choice">
-          <input
-            id="Pokemon TCG Pocket"
-            type="checkbox"
-            v-model="hobbies"
-            value="Pokemon TCG Pocket"
-          />
-          <label for="Pokemon TCG Pocket">Pokemon TCG Pocket</label>
+        <div class="input-text">
+          <input type="text" class="input-add-hobby" v-model="inputHobby" />
+          <button class="btn-add-hobby" @click="addHobby">新增興趣</button>
         </div>
       </fieldset>
+      <div class="input-text">
+        <div class="tags">
+          <div class="tag" v-for="(tag, index) in tags" :key="index">
+            <span class="tag-text">{{ tag }}</span>
+            <span class="btn-remove" @click="removeTag"
+              ><i class="fa-solid fa-circle-xmark" :data-tag="tag"></i
+            ></span>
+          </div>
+        </div>
+        <label for="tag">請新增標籤：</label>
+        <input id="tag" type="text" class="input-add-tag" v-model="inputTag" />
+        <button class="btn-add-tag" @click="addTag">新增標籤</button>
+      </div>
       <div class="select">
         <label for="location">請選擇居住地：</label>
         <select id="location" v-model="residence">
           <option disabled>請選擇</option>
-          <option v-for="region in regions" :value="region">{{ region }}</option>
+          <option v-for="(region, index) in regions" :value="region" :key="index">
+            {{ region }}
+          </option>
         </select>
       </div>
       <div class="input-text">
@@ -165,6 +205,10 @@ function previewAvatar() {
         </div>
         <input id="avatar" type="file" ref="fileInput" @change="previewAvatar" />
       </div>
+      <div class="input-buttons">
+        <input id="submit" type="submit" />
+        <input id="reset" type="reset" class="btn-reset" />
+      </div>
     </form>
 
     <!-- 放預覽 -->
@@ -174,7 +218,7 @@ function previewAvatar() {
       <div>日期、時間：{{ date }} {{ time }}</div>
       <div>性別：{{ gender }}</div>
       <div>興趣：{{ showedHobbies }}</div>
-      <div>標籤：</div>
+      <div>標籤：{{ showedTags }}</div>
       <div>居住地：{{ residence }}</div>
       <div>年齡：{{ age }}</div>
       <div>email：{{ email }}</div>
@@ -227,6 +271,27 @@ main {
   margin-right: 5px;
 }
 
+.input-add-hobby,
+.input-add-tag {
+  margin-right: 5px;
+}
+
+.btn-add-hobby,
+.btn-add-tag {
+  line-height: 20px;
+}
+
+.tags {
+  display: flex;
+  gap: 5px;
+
+  height: 20px;
+}
+.tag {
+  display: flex;
+  gap: 2px;
+}
+
 .icon-eye {
   margin-left: 5px;
   cursor: pointer;
@@ -251,6 +316,14 @@ main {
   object-fit: cover;
 }
 
+.input-buttons {
+  padding: 20px 0;
+}
+
+.btn-reset {
+  color: red;
+}
+
 @media (min-width: 1024px) {
   main {
     flex-direction: row-reverse;
@@ -258,8 +331,7 @@ main {
 
   main > * {
     flex: 1;
-    min-width: 300px;
-    max-width: 700px;
+    width: 400px;
     text-wrap: wrap;
   }
 }
