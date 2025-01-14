@@ -57,8 +57,7 @@ function addTag() {
 }
 
 function removeTag(event) {
-  const targetTag = event.target.dataset.tag
-  const indexOfTargetTag = tags.value.indexOf(targetTag)
+  const indexOfTargetTag = event.target.dataset.tag
   tags.value.splice(indexOfTargetTag, 1)
 }
 
@@ -153,7 +152,7 @@ function previewAvatar() {
           <div class="tag" v-for="(tag, index) in tags" :key="index">
             <span class="tag-text">{{ tag }}</span>
             <span class="btn-remove" @click="removeTag"
-              ><i class="fa-solid fa-circle-xmark" :data-tag="tag"></i
+              ><i class="fa-solid fa-circle-xmark" :data-tag="index"></i
             ></span>
           </div>
         </div>
