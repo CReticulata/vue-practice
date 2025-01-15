@@ -108,59 +108,59 @@ function previewAvatar() {
   </header>
   <main>
     <!-- 放表單 -->
-    <form class="form" @submit.prevent>
-      <div class="input-text">
+    <form @submit.prevent>
+      <div class="input-field">
         <label for="name">請輸入姓名：</label>
         <input id="name" type="text" placeholder="橘子" v-model="name" />
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="phone">請輸入電話：</label>
         <input id="phone" type="tel" placeholder="0912345678" v-model="phone" />
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="date">請輸入日期：</label>
         <input id="date" type="date" v-model="date" />
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="time">請輸入時間：</label>
         <input id="time" type="time" v-model="time" />
       </div>
-      <fieldset class="input-radio">
+      <fieldset>
         <legend>請選擇生理性別：</legend>
-        <div class="input-choice">
+        <div class="input-field input-choice">
           <input id="female" type="radio" v-model="gender" value="生理女" />
           <label for="female">生理女</label>
         </div>
-        <div class="input-choice">
+        <div class="input-field input-choice">
           <input id="male" type="radio" v-model="gender" value="生理男" />
           <label for="male">生理男</label>
         </div>
       </fieldset>
-      <fieldset class="input-radio">
+      <fieldset>
         <legend>請選擇興趣：</legend>
-        <div class="input-choice" v-for="(choice, index) in choices" :key="index">
+        <div class="input-field input-choice" v-for="(choice, index) in choices" :key="index">
           <input :id="choice" type="checkbox" v-model="hobbies" :value="choice" />
           <label :for="choice">{{ choice }}</label>
         </div>
-        <div class="input-text">
-          <input type="text" class="input-add-hobby" v-model="inputHobby" />
-          <button class="btn-add-hobby" @click="addHobby">新增興趣</button>
+        <div class="input-field">
+          <input type="text" v-model="inputHobby" />
+          <button class="btn-add" @click="addHobby">新增興趣</button>
         </div>
       </fieldset>
-      <div class="input-text">
+      <div class="input-field">
         <div class="tags">
           <div class="tag" v-for="(tag, index) in tags" :key="index">
-            <span class="tag-text">{{ tag }}</span>
-            <span class="btn-remove" @click="removeTag"
+            <span>{{ tag }}</span>
+            <span @click="removeTag"
               ><i class="fa-solid fa-circle-xmark" :data-tag="index"></i
             ></span>
           </div>
         </div>
         <label for="tag">請新增標籤：</label>
-        <input id="tag" type="text" class="input-add-tag" v-model="inputTag" />
-        <button class="btn-add-tag" @click="addTag">新增標籤</button>
+        <input id="tag" type="text" v-model="inputTag" />
+        <button class="btn-add" @click="addTag">新增標籤</button>
       </div>
-      <div class="select">
+      <div class="input-field">
         <label for="location">請選擇居住地：</label>
         <select id="location" v-model="residence">
           <option disabled>請選擇</option>
@@ -169,15 +169,15 @@ function previewAvatar() {
           </option>
         </select>
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="age">請輸入年齡：</label>
         <input id="age" type="number" v-model.number="age" min="0" />
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="email">請輸入email：</label>
         <input id="email" type="email" placeholder="tangerine@15t.com" v-model="email" />
       </div>
-      <div class="input-text">
+      <div class="input-field">
         <label for="password">請輸入密碼：</label>
         <input id="password" :type="inputTypeForPassword" v-model="password" />
         <span class="icon-eye" v-if="!isShowingPassword" @click="togglePassword">
@@ -187,22 +187,19 @@ function previewAvatar() {
           <i class="fa-solid fa-eye-slash"></i>
         </span>
       </div>
-      <div class="input-choice">
+      <div class="input-field">
         <span>請選擇體驗感受：</span>
         <input id="feeling" type="range" v-model="feeling" min="1" max="5" />
         <label for="feeling">{{ feeling }}分</label>
       </div>
-      <div class="textarea">
-        <div>
-          <label for="note">備註：</label>
-        </div>
-        <textarea id="note" v-model="note" rows="3"> </textarea>
+      <div>
+        <label for="note">備註：</label>
+        <textarea class="textarea" id="note" v-model="note" rows="3"> </textarea>
       </div>
-      <div class="input-file">
-        <div>
-          <label for="avatar">上傳大頭貼：</label>
-        </div>
-        <input id="avatar" type="file" ref="fileInput" @change="previewAvatar" />
+      <div class="input-field">
+        <div></div>
+        <label for="avatar">上傳大頭貼：</label>
+        <input class="input-file" id="avatar" type="file" ref="fileInput" @change="previewAvatar" />
       </div>
       <div class="input-buttons">
         <input id="submit" type="submit" />
@@ -226,7 +223,7 @@ function previewAvatar() {
       <div>備註：{{ oneLineNote }}</div>
       <div>
         大頭貼預覽：
-        <div class="image-preview" v-if="imageUrl">
+        <div class="preview-image" v-if="imageUrl">
           <img :src="imageUrl" />
         </div>
       </div>
@@ -258,26 +255,29 @@ main {
   gap: 10px;
 }
 
-.input-text > * {
+@media (min-width: 1024px) {
+  main {
+    flex-direction: row-reverse;
+  }
+
+  main > * {
+    flex: 1;
+    width: 400px;
+    text-wrap: wrap;
+  }
+}
+
+.input-field > * {
   vertical-align: middle;
 }
 
-.input-choice > * {
-  vertical-align: middle;
+.input-choice > :nth-child(n + 2) {
+  margin-left: 3px;
 }
 
-.input-choice > input {
-  margin-right: 5px;
-}
-
-.input-add-hobby,
-.input-add-tag {
-  margin-right: 5px;
-}
-
-.btn-add-hobby,
-.btn-add-tag {
+.btn-add {
   line-height: 20px;
+  margin-left: 5px;
 }
 
 .tags {
@@ -296,20 +296,20 @@ main {
   cursor: pointer;
 }
 
-.textarea textarea {
+.textarea {
   width: 100%;
 }
 
-.input-file input {
+.input-file {
   cursor: pointer;
 }
 
-.image-preview {
+.preview-image {
   width: 200px;
   height: 200px;
 }
 
-.image-preview img {
+.preview-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -321,17 +321,5 @@ main {
 
 .btn-reset {
   color: red;
-}
-
-@media (min-width: 1024px) {
-  main {
-    flex-direction: row-reverse;
-  }
-
-  main > * {
-    flex: 1;
-    width: 400px;
-    text-wrap: wrap;
-  }
 }
 </style>
