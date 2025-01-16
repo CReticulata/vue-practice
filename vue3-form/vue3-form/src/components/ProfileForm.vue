@@ -75,6 +75,10 @@ function addHobbyOption() {
   return newHobby
 }
 
+const showedHobbies = computed(() => {
+  return hobbies.value.join(', ')
+})
+
 // tag
 const inputTag = ref('')
 function addTag() {
@@ -113,6 +117,11 @@ function togglePassword() {
     inputTypeForPassword.value = 'password'
   }
 }
+
+const oneLineNote = computed(() => {
+  const noteLines = note.value.split('\n')
+  return noteLines.join('\\n')
+})
 </script>
 
 <template>
