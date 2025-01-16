@@ -1,7 +1,40 @@
 <script setup>
 import { computed } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
 import { ref, useTemplateRef } from 'vue'
+import ProfileForm from './components/ProfileForm.vue'
+
+const form = ref({
+  name: '',
+  phone: '',
+  date: getNowDate(),
+  time: getNowTime(),
+  gender: '',
+  // choices: ['Pokemon Sleep', 'Pokemon TCG', 'Pokemon TCG Pocket'], // 為了hobbies的選項，維護資料用
+  hobbies: [],
+  // inputHobby: '', // 為了增加hobbies，維護資料用
+  tags: [],
+  // inputTag: '', // 為了增加tags，維護資料用
+  // regions: ['基隆市', '台北市', '新北市', '台南市', '其他'],
+  residence: '請選擇',
+  age: null,
+  email: '',
+  password: '',
+  // isShowingPassword: false, // 畫面邏輯
+  // inputTypeForPassword: 'password',
+  feeling: 3,
+  note: '',
+  imageUrl: '',
+})
+
+function onChangeHobbies(event) {
+  const choice = event.target.value
+  if (form.value.hobbies.includes(choice)) {
+    const index = form.value.hobbies.findIndex((item) => item === choice)
+    form.value.hobbies.splice(index, 1)
+  } else {
+    form.value.hobbies.push(choice)
+  }
+}
 
 const name = ref('')
 const phone = ref('')
@@ -16,15 +49,24 @@ function addLeadingZero(time) {
   }
 }
 
-const now = new Date()
-const nowYear = now.getFullYear()
-const nowMonth = addLeadingZero(now.getMonth() + 1)
-const nowDate = now.getDate()
-const date = ref(`${nowYear}-${nowMonth}-${nowDate}`)
+function getNowDate() {
+  const now = new Date()
+  const nowYear = now.getFullYear()
+  const nowMonth = addLeadingZero(now.getMonth() + 1)
+  const nowDate = now.getDate()
+  return `${nowYear}-${nowMonth}-${nowDate}`
+}
+const date = ref(getNowDate())
+// const date = ref(new Date())
 
-const nowHour = addLeadingZero(now.getHours())
-const nowMinute = addLeadingZero(now.getMinutes())
-const time = ref(`${nowHour}:${nowMinute}`)
+function getNowTime() {
+  const now = new Date()
+  const nowHour = addLeadingZero(now.getHours())
+  const nowMinute = addLeadingZero(now.getMinutes())
+  return `${nowHour}:${nowMinute}`
+}
+
+const time = ref(getNowTime())
 
 const gender = ref('')
 
@@ -35,9 +77,10 @@ const showedHobbies = computed(() => {
   return hobbies.value.join(', ')
 })
 
-const inputHobby = ref(null)
+const inputHobby = ref('')
+
 function addHobby() {
-  if (inputHobby.value == null) {
+  if (inputHobby.value.trim() === '') {
     return
   }
 
@@ -46,9 +89,9 @@ function addHobby() {
 }
 
 const tags = ref([])
-const inputTag = ref(null)
+const inputTag = ref('')
 function addTag() {
-  if (inputTag.value == null) {
+  if (inputTag.value.trim() === '') {
     return
   }
 
@@ -56,8 +99,8 @@ function addTag() {
   inputTag.value = null
 }
 
-function removeTag(event) {
-  const indexOfTargetTag = event.target.dataset.tag
+function removeTag(index) {
+  const indexOfTargetTag = index
   tags.value.splice(indexOfTargetTag, 1)
 }
 
@@ -65,7 +108,7 @@ const showedTags = computed(() => {
   return tags.value.join(', ')
 })
 
-const regions = ref(['基隆市', '台北市', '新北市', '南部'])
+const regions = ref(['基隆市', '台北市', '新北市', '台南市', '其他'])
 const residence = ref('請選擇')
 
 const age = ref(null)
@@ -85,6 +128,7 @@ function togglePassword() {
 }
 
 const feeling = ref(3)
+
 const note = ref('')
 const oneLineNote = computed(() => {
   const noteLines = note.value.split('\n')
@@ -96,7 +140,7 @@ const imageUrl = ref('')
 
 function previewAvatar() {
   const inputImage = fileInput.value.files[0]
-  imageUrl.value = URL.createObjectURL(inputImage)
+  form.value.imageUrl = URL.createObjectURL(inputImage)
 }
 </script>
 
@@ -111,35 +155,67 @@ function previewAvatar() {
     <form @submit.prevent>
       <div class="input-field">
         <label for="name">請輸入姓名：</label>
-        <input id="name" type="text" placeholder="橘子" v-model="name" />
+        <input
+          id="name"
+          type="text"
+          placeholder="橘子"
+          :value="form.name"
+          @input="form.name = $event.target.value"
+        />
       </div>
       <div class="input-field">
         <label for="phone">請輸入電話：</label>
-        <input id="phone" type="tel" placeholder="0912345678" v-model="phone" />
+        <input
+          id="phone"
+          type="tel"
+          placeholder="0912345678"
+          :value="form.phone"
+          @input="form.phone = $event.target.value"
+        />
       </div>
       <div class="input-field">
         <label for="date">請輸入日期：</label>
-        <input id="date" type="date" v-model="date" />
+        <input id="date" type="date" :value="form.date" @input="form.date = $event.target.value" />
       </div>
       <div class="input-field">
         <label for="time">請輸入時間：</label>
-        <input id="time" type="time" v-model="time" />
+        <input id="time" type="time" :value="form.time" @input="form.time = $event.target.value" />
       </div>
       <fieldset>
         <legend>請選擇生理性別：</legend>
         <div class="input-field input-choice">
-          <input id="female" type="radio" v-model="gender" value="生理女" />
+          <input
+            id="female"
+            type="radio"
+            :value="form.gender"
+            @input="form.gender = $event.target.value"
+            name="gender"
+            value="生理女"
+          />
           <label for="female">生理女</label>
         </div>
         <div class="input-field input-choice">
-          <input id="male" type="radio" v-model="gender" value="生理男" />
+          <input
+            id="male"
+            type="radio"
+            :value="form.gender"
+            @input="form.gender = $event.target.value"
+            name="gender"
+            value="生理男"
+          />
           <label for="male">生理男</label>
         </div>
       </fieldset>
       <fieldset>
         <legend>請選擇興趣：</legend>
         <div class="input-field input-choice" v-for="(choice, index) in choices" :key="index">
-          <input :id="choice" type="checkbox" v-model="hobbies" :value="choice" />
+          <input
+            :id="choice"
+            type="checkbox"
+            :checked="form.hobbies.includes(choice)"
+            @change="onChangeHobbies"
+            :value="choice"
+          />
           <label :for="choice">{{ choice }}</label>
         </div>
         <div class="input-field">
@@ -151,9 +227,7 @@ function previewAvatar() {
         <div class="tags">
           <div class="tag" v-for="(tag, index) in tags" :key="index">
             <span>{{ tag }}</span>
-            <span @click="removeTag"
-              ><i class="fa-solid fa-circle-xmark" :data-tag="index"></i
-            ></span>
+            <span @click="removeTag(index)"><i class="fa-solid fa-circle-xmark"></i></span>
           </div>
         </div>
         <label for="tag">請新增標籤：</label>
@@ -162,8 +236,12 @@ function previewAvatar() {
       </div>
       <div class="input-field">
         <label for="location">請選擇居住地：</label>
-        <select id="location" v-model="residence">
-          <option disabled>請選擇</option>
+        <select
+          id="location"
+          :value="form.residence"
+          @change="form.residence = $event.target.value"
+        >
+          <option disabled :value="'請選擇'">請選擇</option>
           <option v-for="(region, index) in regions" :value="region" :key="index">
             {{ region }}
           </option>
@@ -171,15 +249,32 @@ function previewAvatar() {
       </div>
       <div class="input-field">
         <label for="age">請輸入年齡：</label>
-        <input id="age" type="number" v-model.number="age" min="0" />
+        <input
+          id="age"
+          type="number"
+          :value="form.age"
+          @input="form.age = Number($event.target.value)"
+          min="0"
+        />
       </div>
       <div class="input-field">
         <label for="email">請輸入email：</label>
-        <input id="email" type="email" placeholder="tangerine@15t.com" v-model="email" />
+        <input
+          id="email"
+          type="email"
+          placeholder="tangerine@15t.com"
+          :value="form.email"
+          @input="form.email = $event.target.value"
+        />
       </div>
       <div class="input-field">
         <label for="password">請輸入密碼：</label>
-        <input id="password" :type="inputTypeForPassword" v-model="password" />
+        <input
+          id="password"
+          :type="inputTypeForPassword"
+          :value="form.password"
+          @input="form.password = $event.target.value"
+        />
         <span class="icon-eye" v-if="!isShowingPassword" @click="togglePassword">
           <i class="fa-solid fa-eye"></i>
         </span>
@@ -189,23 +284,59 @@ function previewAvatar() {
       </div>
       <div class="input-field">
         <span>請選擇體驗感受：</span>
-        <input id="feeling" type="range" v-model="feeling" min="1" max="5" />
+        <input
+          id="feeling"
+          type="range"
+          :value="form.feeling"
+          @input="form.feeling = Number($event.target.value)"
+          min="1"
+          max="5"
+        />
         <label for="feeling">{{ feeling }}分</label>
       </div>
       <div>
         <label for="note">備註：</label>
-        <textarea class="textarea" id="note" v-model="note" rows="3"> </textarea>
+        <textarea
+          class="textarea"
+          id="note"
+          :value="form.note"
+          @input="form.note = $event.target.value"
+          rows="3"
+        >
+        </textarea>
       </div>
       <div class="input-field">
         <div></div>
         <label for="avatar">上傳大頭貼：</label>
         <input class="input-file" id="avatar" type="file" ref="fileInput" @change="previewAvatar" />
+        <img :src="form.imageUrl" />
       </div>
       <div class="input-buttons">
         <input id="submit" type="submit" />
         <input id="reset" type="reset" class="btn-reset" />
       </div>
     </form>
+
+    <ProfileForm
+      :form="form"
+      :hobbyOptions="choices"
+      :regionOptions="regions"
+      @update:name="form = $event"
+      @update:phone="form = $event"
+      @update:date="form = $event"
+      @update:time="form = $event"
+      @update:gender="form = $event"
+      @update:hobbies="form = $event"
+      @update:tags="form = $event"
+      @update:residence="form = $event"
+      @update:age="form = $event"
+      @update:email="form = $event"
+      @update:password="form = $event"
+      @update:feeling="form = $event"
+      @update:note="form = $event"
+      @update:imageUrl="form = $event"
+      @update:hobbyOptions="choices = $event"
+    ></ProfileForm>
 
     <!-- 放預覽 -->
     <div class="preview">
@@ -227,11 +358,12 @@ function previewAvatar() {
           <img :src="imageUrl" />
         </div>
       </div>
+      <pre>{{ form }}</pre>
     </div>
   </main>
 </template>
 
-<style scoped>
+<style>
 header {
   line-height: 1.5;
   max-height: 100vh;
