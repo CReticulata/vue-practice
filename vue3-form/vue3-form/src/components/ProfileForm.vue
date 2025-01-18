@@ -1,5 +1,8 @@
 <script setup>
 import { ref, computed, useTemplateRef } from 'vue'
+import CheckboxGroup from './CheckboxGroup.vue'
+import TagGroup from './TagGroup.vue'
+import InputPassword from './InputPassword.vue'
 
 const props = defineProps({
   form: {
@@ -32,6 +35,8 @@ const emits = defineEmits([
   'update:feeling',
   'update:note',
   'update:imageUrl',
+  'submit',
+  'reset',
 ])
 
 // const test = computed(() => {
@@ -42,18 +47,6 @@ const emits = defineEmits([
 //   }
 // })
 
-function onChangeHobbies(event) {
-  const choice = event.target.value
-  if (props.form.hobbies.includes(choice)) {
-    const index = props.form.hobbies.findIndex((item) => item === choice)
-    // props.form.value.hobbies.splice(index, 1)
-    return [...props.form.hobbies.slice(0, index), ...props.form.hobbies.slice(index + 1)]
-  } else {
-    // props.form.value.hobbies.push(choice)
-    return [...props.form.hobbies, choice]
-  }
-}
-
 const fileInput = useTemplateRef('fileInput')
 function previewAvatar() {
   const inputImage = fileInput.value.files[0]
@@ -61,62 +54,30 @@ function previewAvatar() {
 }
 
 // hobby options
-const inputHobby = ref('')
-function addHobbyOption() {
-  if (inputHobby.value.trim() === '') {
-    return
-  }
+const inputHobby = ref('') // 因為是選配所以在外面處理
+// function addHobbyOption() {
+//   if (inputHobby.value.trim() === '') {
+//     return
+//   }
 
-  // choices.value.push(inputHobby.value)
-  const newHobby = inputHobby.value
+//   // choices.value.push(inputHobby.value)
+//   const newHobby = inputHobby.value
 
-  inputHobby.value = null
+//   inputHobby.value = null
 
-  return newHobby
-}
+//   return newHobby
+// }
 
 const showedHobbies = computed(() => {
   return hobbies.value.join(', ')
 })
 
 // tag
-const inputTag = ref('')
-function addTag() {
-  if (inputTag.value.trim() === '') {
-    return
-  }
-
-  // tags.value.push(inputTag.value)
-  const newTag = inputTag.value
-
-  inputTag.value = null
-
-  return [...props.form.tags, newTag]
-}
-
-function removeTag(index) {
-  // const indexOfTargetTag = index
-  // tags.value.splice(indexOfTargetTag, 1)
-  return [...props.form.tags.slice(0, index), ...props.form.tags.slice(index + 1)]
-}
-
 const showedTags = computed(() => {
   return props.form.tags.join(', ')
 })
 
 // password
-const isShowingPassword = ref(false)
-const inputTypeForPassword = ref('password')
-
-function togglePassword() {
-  isShowingPassword.value = !isShowingPassword.value
-
-  if (inputTypeForPassword.value === 'password') {
-    inputTypeForPassword.value = 'text'
-  } else {
-    inputTypeForPassword.value = 'password'
-  }
-}
 
 const oneLineNote = computed(() => {
   const noteLines = note.value.split('\n')
@@ -125,7 +86,7 @@ const oneLineNote = computed(() => {
 </script>
 
 <template>
-  <form @submit.prevent>
+  <form @submit.prevent="emits('sumbit')" @reset.prevent="emits('reset')">
     <div class="input-field">
       <label for="name">請輸入姓名：</label>
       <input
@@ -219,48 +180,37 @@ const oneLineNote = computed(() => {
         <label for="male">生理男</label>
       </div>
     </fieldset>
-    <fieldset>
-      <legend>請選擇興趣：</legend>
-      <div class="input-field input-choice" v-for="(choice, index) in hobbyOptions" :key="index">
-        <input
-          :id="choice"
-          type="checkbox"
-          :checked="props.form.hobbies.includes(choice)"
-          @change="
-            emits('update:hobbies', {
-              ...props.form,
-              hobbies: onChangeHobbies($event),
-            })
-          "
-          :value="choice"
-        />
-        <label :for="choice">{{ choice }}</label>
-      </div>
+    <CheckboxGroup
+      :value="props.form.hobbies"
+      :options="hobbyOptions"
+      @change="
+        emits('update:hobbies', {
+          ...props.form,
+          hobbies: $event,
+        })
+      "
+      v-slot="{ onAddOption }"
+    >
       <div class="input-field">
         <input type="text" v-model="inputHobby" />
-        <button
-          class="btn-add"
-          @click="emits('update:hobbyOptions', [...props.hobbyOptions, addHobbyOption()])"
-        >
-          新增興趣
+        <button class="btn-add" @click="emits('update:hobbyOptions', onAddOption(inputHobby))">
+          新增
         </button>
       </div>
-    </fieldset>
-    <div class="input-field">
-      <div class="tags">
-        <div class="tag" v-for="(tag, index) in props.form.tags" :key="index">
-          <span>{{ tag }}</span>
-          <span @click="emits('update:tags', { ...props.form, tags: removeTag(index) })"
-            ><i class="fa-solid fa-circle-xmark"></i
-          ></span>
-        </div>
-      </div>
-      <label for="tag">請新增標籤：</label>
-      <input id="tag" type="text" v-model="inputTag" />
-      <button class="btn-add" @click="emits('update:tags', { ...props.form, tags: addTag() })">
-        新增標籤
+      <!-- <div class="input-field">
+      <input type="text" v-model="newOption" />
+      <button class="btn-add" @click="emits('create:options', [...props.options, onCreate()])">
+        新增
       </button>
-    </div>
+    </div> -->
+    </CheckboxGroup>
+    <TagGroup
+      :value="props.form.tags"
+      @create="emits('update:tags', { ...props.form, tags: $event })"
+      @delete="emits('update:tags', { ...props.form, tags: $event })"
+    >
+    </TagGroup>
+
     <div class="input-field">
       <label for="location">請選擇居住地：</label>
       <select
@@ -309,26 +259,15 @@ const oneLineNote = computed(() => {
         "
       />
     </div>
-    <div class="input-field">
-      <label for="password">請輸入密碼：</label>
-      <input
-        id="password"
-        :type="inputTypeForPassword"
-        :value="props.form.password"
-        @input="
-          emits('update:password', {
-            ...props.form,
-            password: $event.target.value,
-          })
-        "
-      />
-      <span class="icon-eye" v-if="!isShowingPassword" @click="togglePassword">
-        <i class="fa-solid fa-eye"></i>
-      </span>
-      <span class="icon-eye" v-if="isShowingPassword" @click="togglePassword">
-        <i class="fa-solid fa-eye-slash"></i>
-      </span>
-    </div>
+    <InputPassword
+      :value="props.form.password"
+      @input="
+        emits('update:password', {
+          ...props.form,
+          password: $event,
+        })
+      "
+    ></InputPassword>
     <div class="input-field">
       <span>請選擇體驗感受：</span>
       <input

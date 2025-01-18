@@ -1,6 +1,5 @@
 <script setup>
-import { computed } from 'vue'
-import { ref, useTemplateRef } from 'vue'
+import { ref } from 'vue'
 import ProfileForm from './components/ProfileForm.vue'
 
 const form = ref({
@@ -26,6 +25,9 @@ const form = ref({
   imageUrl: '',
 })
 
+const choices = ref(['Pokemon Sleep', 'Pokemon TCG', 'Pokemon TCG Pocket'])
+const regions = ref(['基隆市', '台北市', '新北市', '台南市', '其他'])
+
 function addLeadingZero(time) {
   if (time < 10) {
     return '0' + time
@@ -48,10 +50,6 @@ function getNowTime() {
   const nowMinute = addLeadingZero(now.getMinutes())
   return `${nowHour}:${nowMinute}`
 }
-
-const choices = ref(['Pokemon Sleep', 'Pokemon TCG', 'Pokemon TCG Pocket'])
-
-const regions = ref(['基隆市', '台北市', '新北市', '台南市', '其他'])
 </script>
 
 <template>
@@ -81,26 +79,28 @@ const regions = ref(['基隆市', '台北市', '新北市', '台南市', '其他
       @update:feeling="form = $event"
       @update:note="form = $event"
       @update:imageUrl="form = $event"
+      @submit="submitForm"
+      @reset=""
     ></ProfileForm>
 
     <!-- 放預覽 -->
     <div class="preview">
-      <div>姓名：{{ name }}</div>
-      <div>電話：{{ phone }}</div>
-      <div>日期、時間：{{ date }} {{ time }}</div>
-      <div>性別：{{ gender }}</div>
+      <div>姓名：{{ form.name }}</div>
+      <div>電話：{{ form.phone }}</div>
+      <div>日期、時間：{{ form.date }} {{ form.time }}</div>
+      <div>性別：{{ form.gender }}</div>
       <div>興趣：{{ showedHobbies }}</div>
       <div>標籤：{{ showedTags }}</div>
-      <div>居住地：{{ residence }}</div>
-      <div>年齡：{{ age }}</div>
-      <div>email：{{ email }}</div>
-      <div>password：{{ password }}</div>
-      <div>體驗感受：{{ feeling }}分</div>
+      <div>居住地：{{ form.residence }}</div>
+      <div>年齡：{{ form.age }}</div>
+      <div>email：{{ form.email }}</div>
+      <div>password：{{ form.password }}</div>
+      <div>體驗感受：{{ form.feeling }}分</div>
       <div>備註：{{ oneLineNote }}</div>
       <div>
         大頭貼預覽：
-        <div class="preview-image" v-if="imageUrl">
-          <img :src="imageUrl" />
+        <div class="preview-image" v-if="form.imageUrl">
+          <img :src="form.imageUrl" />
         </div>
       </div>
       <pre>{{ form }}</pre>
