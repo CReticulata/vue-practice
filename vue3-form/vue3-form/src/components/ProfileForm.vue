@@ -86,7 +86,7 @@ const oneLineNote = computed(() => {
 </script>
 
 <template>
-  <form @submit.prevent="emits('sumbit')" @reset.prevent="emits('reset')">
+  <form @submit.prevent="emits('submit')" @reset.prevent="emits('reset')">
     <div class="input-field">
       <label for="name">請輸入姓名：</label>
       <input
