@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import ProfileForm from './components/ProfileForm.vue'
+import axios from 'axios'
 
 const form = ref({
   name: '',
@@ -49,6 +50,13 @@ function getNowTime() {
   const nowHour = addLeadingZero(now.getHours())
   const nowMinute = addLeadingZero(now.getMinutes())
   return `${nowHour}:${nowMinute}`
+}
+
+function submitForm() {
+  axios
+    .post('https://my-json-server.typicode.com/Code-Pop/Vue-3-Forms/events', form.value)
+    .then((res) => console.log(res))
+    .catch((err) => console.log(err))
 }
 </script>
 
