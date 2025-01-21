@@ -1,8 +1,14 @@
 <script setup>
-import { ref, computed, useTemplateRef } from 'vue'
+import { ref, computed } from 'vue'
 import CheckboxGroup from './CheckboxGroup.vue'
 import TagGroup from './TagGroup.vue'
 import InputPassword from './InputPassword.vue'
+import InputFile from './InputFile.vue'
+import InputString from './InputString.vue'
+import InputNumber from './InputNumber.vue'
+import InputTextarea from './InputTextarea.vue'
+import InputSelect from './InputSelect.vue'
+import InputRadioGroup from './InputRadioGroup.vue'
 
 const props = defineProps({
   form: {
@@ -47,12 +53,6 @@ const emits = defineEmits([
 //   }
 // })
 
-const fileInput = useTemplateRef('fileInput')
-function previewAvatar() {
-  const inputImage = fileInput.value.files[0]
-  return URL.createObjectURL(inputImage)
-}
-
 // hobby options
 const inputHobby = ref('') // 因為是選配所以在外面處理
 // function addHobbyOption() {
@@ -68,6 +68,7 @@ const inputHobby = ref('') // 因為是選配所以在外面處理
 //   return newHobby
 // }
 
+// ???這些computed為什麼不是在有資料的地方處理?
 const showedHobbies = computed(() => {
   return hobbies.value.join(', ')
 })
@@ -87,99 +88,69 @@ const oneLineNote = computed(() => {
 
 <template>
   <form @submit.prevent="emits('submit')" @reset.prevent="emits('reset')">
-    <div class="input-field">
-      <label for="name">請輸入姓名：</label>
-      <input
-        id="name"
-        type="text"
-        placeholder="橘子"
-        :value="props.form.name"
-        @input="
-          emits('update:name', {
-            ...props.form,
-            name: $event.target.value,
-          })
-        "
-      />
-    </div>
-    <div class="input-field">
-      <label for="phone">請輸入電話：</label>
-      <input
-        id="phone"
-        type="tel"
-        placeholder="0912345678"
-        :value="props.form.phone"
-        @input="
-          emits('update:phone', {
-            ...props.form,
-            phone: $event.target.value,
-          })
-        "
-      />
-    </div>
-    <div class="input-field">
-      <label for="date">請輸入日期：</label>
-      <input
-        id="date"
-        type="date"
-        :value="props.form.date"
-        @input="
-          emits('update:date', {
-            ...props.form,
-            date: $event.target.value,
-          })
-        "
-      />
-    </div>
-    <div class="input-field">
-      <label for="time">請輸入時間：</label>
-      <input
-        id="time"
-        type="time"
-        :value="props.form.time"
-        @input="
-          emits('update:time', {
-            ...props.form,
-            time: $event.target.value,
-          })
-        "
-      />
-    </div>
-    <fieldset>
-      <legend>請選擇生理性別：</legend>
-      <div class="input-field input-choice">
-        <input
-          id="female"
-          type="radio"
-          :checked="props.form.gender === '生理女'"
-          @change="
-            emits('update:gender', {
-              ...props.form,
-              gender: $event.target.value,
-            })
-          "
-          name="gender"
-          value="生理女"
-        />
-        <label for="female">生理女</label>
-      </div>
-      <div class="input-field input-choice">
-        <input
-          id="male"
-          type="radio"
-          :checked="props.form.gender === '生理男'"
-          @change="
-            emits('update:gender', {
-              ...props.form,
-              gender: $event.target.value,
-            })
-          "
-          name="gender"
-          value="生理男"
-        />
-        <label for="male">生理男</label>
-      </div>
-    </fieldset>
+    <InputString
+      placeholder="橘子"
+      label="姓名"
+      type="text"
+      :value="props.form.name"
+      @input="
+        emits('update:name', {
+          ...props.form,
+          name: $event,
+        })
+      "
+    ></InputString>
+
+    <InputString
+      placeholder="0912345678"
+      label="電話"
+      type="tel"
+      :value="props.form.phone"
+      @input="
+        emits('update:phone', {
+          ...props.form,
+          phone: $event,
+        })
+      "
+    ></InputString>
+
+    <InputString
+      label="日期"
+      type="date"
+      :value="props.form.date"
+      @input="
+        emits('update:date', {
+          ...props.form,
+          date: $event,
+        })
+      "
+    ></InputString>
+
+    <InputString
+      label="時間"
+      type="time"
+      :value="props.form.time"
+      @input="
+        emits('update:time', {
+          ...props.form,
+          time: $event,
+        })
+      "
+    ></InputString>
+
+    <InputRadioGroup
+      legend="生理性別"
+      name="gender"
+      :radioOptions="['生理女', '生理男']"
+      :checkedValue="props.form.gender"
+      @change="
+        emits('update:gender', {
+          ...props.form,
+          gender: $event,
+        })
+      "
+    ></InputRadioGroup>
+
     <CheckboxGroup
       :value="props.form.hobbies"
       :options="hobbyOptions"
@@ -204,6 +175,7 @@ const oneLineNote = computed(() => {
       </button>
     </div> -->
     </CheckboxGroup>
+
     <TagGroup
       :value="props.form.tags"
       @create="emits('update:tags', { ...props.form, tags: $event })"
@@ -211,54 +183,45 @@ const oneLineNote = computed(() => {
     >
     </TagGroup>
 
-    <div class="input-field">
-      <label for="location">請選擇居住地：</label>
-      <select
-        id="location"
-        :value="props.form.residence"
-        @change="
-          emits('update:residence', {
-            ...props.form,
-            residence: $event.target.value,
-          })
-        "
-      >
-        <option disabled :value="'請選擇'">請選擇</option>
-        <option v-for="(region, index) in props.regionOptions" :value="region" :key="index">
-          {{ region }}
-        </option>
-      </select>
-    </div>
-    <div class="input-field">
-      <label for="age">請輸入年齡：</label>
-      <input
-        id="age"
-        type="number"
-        :value="props.form.age"
-        @input="
-          emits('update:age', {
-            ...props.form,
-            age: Number($event.target.value),
-          })
-        "
-        min="0"
-      />
-    </div>
-    <div class="input-field">
-      <label for="email">請輸入email：</label>
-      <input
-        id="email"
-        type="email"
-        placeholder="tangerine@15t.com"
-        :value="props.form.email"
-        @input="
-          emits('update:email', {
-            ...props.form,
-            email: $event.target.value,
-          })
-        "
-      />
-    </div>
+    <InputSelect
+      label="居住地"
+      :value="props.form.residence"
+      @change="
+        emits('update:residence', {
+          ...props.form,
+          residence: $event,
+        })
+      "
+      :options="props.regionOptions"
+    ></InputSelect>
+
+    <InputNumber
+      label="年齡"
+      type="number"
+      min="0"
+      :value="props.form.age"
+      @input="
+        emits('update:age', {
+          ...props.form,
+          age: $event,
+        })
+      "
+    >
+    </InputNumber>
+
+    <InputString
+      label="email"
+      type="email"
+      placeholder="tangerine@15t.com"
+      :value="props.form.email"
+      @input="
+        emits('update:email', {
+          ...props.form,
+          email: $event,
+        })
+      "
+    ></InputString>
+
     <InputPassword
       :value="props.form.password"
       @input="
@@ -268,56 +231,46 @@ const oneLineNote = computed(() => {
         })
       "
     ></InputPassword>
-    <div class="input-field">
-      <span>請選擇體驗感受：</span>
-      <input
-        id="feeling"
-        type="range"
-        :value="props.form.feeling"
-        @input="
-          emits('update:feeling', {
-            ...props.form,
-            feeling: Number($event.target.value),
-          })
-        "
-        min="1"
-        max="5"
-      />
-      <label for="feeling">{{ props.form.feeling }}分</label>
-    </div>
-    <div>
-      <label for="note">備註：</label>
-      <textarea
-        class="textarea"
-        id="note"
-        :value="props.form.note"
-        @input="
-          emits('update:note', {
-            ...props.form,
-            note: $event.target.value,
-          })
-        "
-        rows="3"
-      >
-      </textarea>
-    </div>
-    <div class="input-field">
-      <div></div>
-      <label for="avatar">上傳大頭貼：</label>
-      <input
-        class="input-file"
-        id="avatar"
-        type="file"
-        ref="fileInput"
-        @change="
-          emits('update:imageUrl', {
-            ...props.form,
-            imageUrl: previewAvatar(),
-          })
-        "
-      />
-      <img :src="props.form.imageUrl" />
-    </div>
+
+    <InputNumber
+      label="體驗感受"
+      type="range"
+      min="1"
+      max="5"
+      :value="props.form.feeling"
+      @input="
+        emits('update:feeling', {
+          ...props.form,
+          feeling: $event,
+        })
+      "
+    >
+      <span>{{ props.form.feeling }}分</span>
+    </InputNumber>
+
+    <InputTextarea
+      label="備註："
+      rows="3"
+      :value="props.form.note"
+      @input="
+        emits('update:note', {
+          ...props.form,
+          note: $event,
+        })
+      "
+    ></InputTextarea>
+
+    <InputFile
+      :imageUrl="props.form.imageUrl"
+      @change="
+        emits('update:imageUrl', {
+          ...props.form,
+          imageUrl: $event,
+        })
+      "
+    >
+    </InputFile>
+
     <div class="input-buttons">
       <input id="submit" type="submit" />
       <input id="reset" type="reset" class="btn-reset" />
