@@ -1,5 +1,6 @@
 <script setup>
 import UniqueID from '../features/UniqueID'
+import ErrorMessage from '../components/ErrorMessage.vue'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -19,6 +20,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  error: {
+    type: String,
+    default: null,
+  },
 })
 
 const emits = defineEmits(['input'])
@@ -35,5 +40,6 @@ const uuid = ref(UniqueID().getID())
       :value="props.value"
       @input="emits('input', $event.target.value)"
     />
+    <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </div>
 </template>

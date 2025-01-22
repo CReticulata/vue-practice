@@ -9,6 +9,7 @@ import InputNumber from './InputNumber.vue'
 import InputTextarea from './InputTextarea.vue'
 import InputSelect from './InputSelect.vue'
 import InputRadioGroup from './InputRadioGroup.vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
   form: {
@@ -84,6 +85,29 @@ const oneLineNote = computed(() => {
   const noteLines = note.value.split('\n')
   return noteLines.join('\\n')
 })
+
+// validation
+const { value: emailValue, errorMessage: emailError } = useField('email', function (value) {
+  if (!value) return '請勿空白'
+
+  const regex =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+  if (!regex.test(String(value).toLowerCase())) {
+    return '輸入的email格式錯誤'
+  }
+
+  return true
+})
+
+function updateEmail(event) {
+  emailValue.value = event
+
+  return emits('update:email', {
+    ...props.form,
+    email: event,
+  })
+}
 </script>
 
 <template>
@@ -99,6 +123,7 @@ const oneLineNote = computed(() => {
           name: $event,
         })
       "
+      error="請勿空白"
     ></InputString>
 
     <InputString
@@ -214,12 +239,8 @@ const oneLineNote = computed(() => {
       type="email"
       placeholder="tangerine@15t.com"
       :value="props.form.email"
-      @input="
-        emits('update:email', {
-          ...props.form,
-          email: $event,
-        })
-      "
+      @input="updateEmail"
+      :error="emailError"
     ></InputString>
 
     <InputPassword
