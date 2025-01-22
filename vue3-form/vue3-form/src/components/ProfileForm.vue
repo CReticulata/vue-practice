@@ -9,7 +9,7 @@ import InputNumber from './InputNumber.vue'
 import InputTextarea from './InputTextarea.vue'
 import InputSelect from './InputSelect.vue'
 import InputRadioGroup from './InputRadioGroup.vue'
-import { useField } from 'vee-validate'
+import { useField, useForm } from 'vee-validate'
 
 const props = defineProps({
   form: {
@@ -87,18 +87,34 @@ const oneLineNote = computed(() => {
 })
 
 // validation
-const { value: emailValue, errorMessage: emailError } = useField('email', function (value) {
-  if (!value) return '請勿空白'
+const validations = {
+  email: (value) => {
+    if (!value) return '請勿空白'
 
-  const regex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    const regex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-  if (!regex.test(String(value).toLowerCase())) {
-    return '輸入的email格式錯誤'
-  }
+    if (!regex.test(String(value).toLowerCase())) {
+      return '輸入的email格式錯誤'
+    }
 
-  return true
+    return true
+  },
+  password: (value) => {
+    const requiredMessage = '請勿空白'
+    if (value === undefined || value === null) return requiredMessage
+    if (!String(value).length) return requiredMessage
+
+    return true
+  },
+}
+
+useForm({
+  validationSchema: validations,
 })
+
+const { value: emailValue, errorMessage: emailError } = useField('email')
+const { value: passwordValue, errorMessage: passwordError } = useField('password')
 
 function updateEmail(event) {
   emailValue.value = event
@@ -106,6 +122,15 @@ function updateEmail(event) {
   return emits('update:email', {
     ...props.form,
     email: event,
+  })
+}
+
+function updatePassword(event) {
+  passwordValue.value = event
+
+  return emits('update:password', {
+    ...props.form,
+    password: event,
   })
 }
 </script>
@@ -245,12 +270,8 @@ function updateEmail(event) {
 
     <InputPassword
       :value="props.form.password"
-      @input="
-        emits('update:password', {
-          ...props.form,
-          password: $event,
-        })
-      "
+      @input="updatePassword"
+      :error="passwordError"
     ></InputPassword>
 
     <InputNumber

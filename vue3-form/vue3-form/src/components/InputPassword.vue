@@ -1,4 +1,5 @@
 <script setup>
+import ErrorMessage from '../components/ErrorMessage.vue'
 import { watch } from 'vue'
 import { ref } from 'vue'
 
@@ -6,6 +7,10 @@ const props = defineProps({
   value: {
     type: String,
     default: '',
+  },
+  error: {
+    type: String,
+    default: null,
   },
 })
 
@@ -41,5 +46,6 @@ watch(isShow, (newValue) => {
     <span class="icon-eye" v-if="isShow" @click="isShow = !isShow">
       <i class="fa-solid fa-eye-slash"></i>
     </span>
+    <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </div>
 </template>
