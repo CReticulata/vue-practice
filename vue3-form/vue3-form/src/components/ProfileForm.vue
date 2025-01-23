@@ -9,7 +9,8 @@ import InputNumber from './InputNumber.vue'
 import InputTextarea from './InputTextarea.vue'
 import InputSelect from './InputSelect.vue'
 import InputRadioGroup from './InputRadioGroup.vue'
-import { useField, useForm } from 'vee-validate'
+import { useForm } from 'vee-validate'
+import { object, string, number, boolean } from 'yup'
 
 const props = defineProps({
   form: {
@@ -64,33 +65,11 @@ const oneLineNote = computed(() => {
 })
 
 // validation
-const validations = {
-  emailFormat: (value) => {
-    if (!value) return '請勿空白'
-
-    const regex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-    if (!regex.test(String(value).toLowerCase())) {
-      return '輸入的email格式錯誤'
-    }
-
-    return true
-  },
-  required: (value) => {
-    const requiredMessage = '請勿空白'
-    if (value === undefined || value === null) return requiredMessage
-    if (!String(value).length) return requiredMessage
-
-    return true
-  },
-}
-
-const validationSchema = {
-  姓名: validations.required,
-  email: validations.emailFormat,
-  password: validations.required,
-}
+const validationSchema = object({
+  姓名: string().required('請勿空白'),
+  email: string().email('輸入的email格式錯誤').required('請勿空白'),
+  password: string().required('請勿空白'),
+})
 
 const { handleSubmit, errors } = useForm({
   validationSchema: validationSchema,

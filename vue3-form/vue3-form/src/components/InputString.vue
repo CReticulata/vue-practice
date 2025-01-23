@@ -47,7 +47,7 @@ function updateValue(event) {
       :type="props.type"
       :placeholder="props.placeholder"
       :value="props.value"
-      @input="updateValue"
+      @change="updateValue"
     />
     <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </div>
