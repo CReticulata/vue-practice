@@ -10,7 +10,7 @@ import InputTextarea from './InputTextarea.vue'
 import InputSelect from './InputSelect.vue'
 import InputRadioGroup from './InputRadioGroup.vue'
 import { useForm } from 'vee-validate'
-import { object, string, number, boolean, array } from 'yup'
+import { object, string, number, array } from 'yup'
 
 const props = defineProps({
   form: {
