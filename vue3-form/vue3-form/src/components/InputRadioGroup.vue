@@ -1,5 +1,7 @@
 <script setup>
 import InputRadio from './InputRadio.vue'
+import ErrorMessage from '../components/ErrorMessage.vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
   legend: {
@@ -18,9 +20,21 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  error: {
+    type: String,
+    default: null,
+  },
 })
 
 const emits = defineEmits(['change'])
+
+const { value: value } = useField(() => props.legend)
+
+function updateValue(event) {
+  value.value = event
+
+  return emits('change', event)
+}
 </script>
 
 <template>
@@ -33,7 +47,9 @@ const emits = defineEmits(['change'])
       :value="option"
       :key="index"
       :checkedValue="props.checkedValue"
-      @change="emits('change', $event)"
+      @change="updateValue"
     ></InputRadio>
+
+    <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </fieldset>
 </template>

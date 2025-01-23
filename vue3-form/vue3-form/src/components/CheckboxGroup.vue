@@ -1,7 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue'
+import ErrorMessage from '../components/ErrorMessage.vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
+  label: {
+    type: String,
+    default: '',
+  },
   value: {
     type: Array,
     default: () => [],
@@ -9,6 +15,10 @@ const props = defineProps({
   options: {
     type: Array,
     default: () => [],
+  },
+  error: {
+    type: String,
+    default: '',
   },
 })
 
@@ -27,35 +37,48 @@ function onChange(event) {
 }
 
 function onAddOption(options) {
-  return (inputHobby) => {
-    if (inputHobby.trim() === '') {
-      return
+  return (inputOption) => {
+    if (inputOption.trim() === '') {
+      return [...options]
+    }
+
+    if (options.includes(inputOption)) {
+      return [...options]
     }
 
     // choices.value.push(inputHobby.value)
-    const newHobby = inputHobby
+    const newOption = inputOption
 
-    inputHobby = null
+    inputOption = null
 
-    return [...options, newHobby]
+    return [...options, newOption]
   }
+}
+
+const { value: value } = useField(() => props.label)
+
+function updateValue(event) {
+  value.value = onChange(event)
+
+  return emits('change', onChange(event))
 }
 </script>
 
 <template>
   <fieldset>
-    <legend>請選擇：</legend>
+    <legend>請選擇{{ props.label }}：</legend>
     <div class="input-field input-choice" v-for="(choice, index) in props.options" :key="index">
       <input
         :id="choice"
         type="checkbox"
         :checked="props.value.includes(choice)"
-        @change="emits('change', onChange($event))"
+        @change="updateValue"
         :value="choice"
       />
       <label :for="choice">{{ choice }}</label>
     </div>
     <slot :onAddOption="onAddOption(props.options)"></slot>
+    <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </fieldset>
 </template>
 

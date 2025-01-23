@@ -10,7 +10,7 @@ import InputTextarea from './InputTextarea.vue'
 import InputSelect from './InputSelect.vue'
 import InputRadioGroup from './InputRadioGroup.vue'
 import { useForm } from 'vee-validate'
-import { object, string, number, boolean } from 'yup'
+import { object, string, number, boolean, array } from 'yup'
 
 const props = defineProps({
   form: {
@@ -67,12 +67,28 @@ const oneLineNote = computed(() => {
 // validation
 const validationSchema = object({
   姓名: string().required('請勿空白'),
+  電話: string().required('請勿空白'),
+  日期: string().required('請勿空白'),
+  時間: string().required('請勿空白'),
+  生理性別: string().required('請勿空白'),
+  興趣: array().length(1, '請勿空白').required('請勿空白'),
+  標籤: array().length(1, '請勿空白').required('請勿空白'),
+  年齡: number().min(0, '不得低於0').required('請勿空白'),
+  居住地: string().required('請勿空白'),
   email: string().email('輸入的email格式錯誤').required('請勿空白'),
   password: string().required('請勿空白'),
+  體驗感受: number().required('請勿空白'),
+  備註: string(),
+  檔案: string().required('請勿空白'),
 })
 
 const { handleSubmit, errors } = useForm({
   validationSchema: validationSchema,
+  initialValues: {
+    日期: props.form.date,
+    時間: props.form.time,
+    體驗感受: 3,
+  },
 })
 
 const submit = handleSubmit((values) => {
@@ -107,6 +123,7 @@ const submit = handleSubmit((values) => {
           phone: $event,
         })
       "
+      :error="errors['電話']"
     ></InputString>
 
     <InputString
@@ -119,6 +136,7 @@ const submit = handleSubmit((values) => {
           date: $event,
         })
       "
+      :error="errors['日期']"
     ></InputString>
 
     <InputString
@@ -131,6 +149,7 @@ const submit = handleSubmit((values) => {
           time: $event,
         })
       "
+      :error="errors['時間']"
     ></InputString>
 
     <InputRadioGroup
@@ -144,9 +163,11 @@ const submit = handleSubmit((values) => {
           gender: $event,
         })
       "
+      :error="errors['生理性別']"
     ></InputRadioGroup>
 
     <CheckboxGroup
+      label="興趣"
       :value="props.form.hobbies"
       :options="hobbyOptions"
       @change="
@@ -156,6 +177,7 @@ const submit = handleSubmit((values) => {
         })
       "
       v-slot="{ onAddOption }"
+      :error="errors['興趣']"
     >
       <div class="input-field">
         <input type="text" v-model="inputHobby" />
@@ -175,6 +197,7 @@ const submit = handleSubmit((values) => {
       :value="props.form.tags"
       @create="emits('update:tags', { ...props.form, tags: $event })"
       @delete="emits('update:tags', { ...props.form, tags: $event })"
+      :error="errors['標籤']"
     >
     </TagGroup>
 
@@ -188,6 +211,7 @@ const submit = handleSubmit((values) => {
         })
       "
       :options="props.regionOptions"
+      :error="errors['居住地']"
     ></InputSelect>
 
     <InputNumber
@@ -201,6 +225,7 @@ const submit = handleSubmit((values) => {
           age: $event,
         })
       "
+      :error="errors['年齡']"
     >
     </InputNumber>
 
@@ -241,12 +266,13 @@ const submit = handleSubmit((values) => {
           feeling: $event,
         })
       "
+      :error="errors['體驗感受']"
     >
       <span>{{ props.form.feeling }}分</span>
     </InputNumber>
 
     <InputTextarea
-      label="備註："
+      label="備註"
       rows="3"
       :value="props.form.note"
       @input="
@@ -255,9 +281,11 @@ const submit = handleSubmit((values) => {
           note: $event,
         })
       "
+      :error="errors['備註']"
     ></InputTextarea>
 
     <InputFile
+      label="檔案"
       :imageUrl="props.form.imageUrl"
       @change="
         emits('update:imageUrl', {
@@ -265,6 +293,7 @@ const submit = handleSubmit((values) => {
           imageUrl: $event,
         })
       "
+      :error="errors['檔案']"
     >
     </InputFile>
 

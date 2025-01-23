@@ -1,10 +1,20 @@
 <script setup>
 import { ref } from 'vue'
+import ErrorMessage from '../components/ErrorMessage.vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
+  label: {
+    type: String,
+    default: '標籤',
+  },
   value: {
     type: Array,
     default: () => [],
+  },
+  error: {
+    type: String,
+    default: '',
   },
 })
 
@@ -20,8 +30,21 @@ function addTag() {
 
   inputTag.value = null
 
-  console.log([...props.value, newTag])
+  updateValue([...props.value, newTag])
+  // console.log([...props.value, newTag])
   return emits('create', [...props.value, newTag])
+}
+
+function removeTag(index) {
+  updateValue([...props.value.slice(0, index), ...props.value.slice(index + 1)])
+
+  return emits('delete', [...props.value.slice(0, index), ...props.value.slice(index + 1)])
+}
+
+const { value: value } = useField(() => props.label)
+
+function updateValue(newValue) {
+  value.value = newValue
 }
 </script>
 <template>
@@ -29,16 +52,12 @@ function addTag() {
     <div class="tags">
       <div class="tag" v-for="(tag, index) in props.value" :key="index">
         <span>{{ tag }}</span>
-        <span
-          @click="
-            emits('delete', [...props.value.slice(0, index), ...props.value.slice(index + 1)])
-          "
-          ><i class="fa-solid fa-circle-xmark"></i
-        ></span>
+        <span @click="removeTag(index)"><i class="fa-solid fa-circle-xmark"></i></span>
       </div>
     </div>
-    <label for="tag">請新增標籤：</label>
+    <label for="tag">請新增{{ props.label }}：</label>
     <input id="tag" type="text" v-model="inputTag" />
-    <button class="btn-add" @click="addTag">新增標籤</button>
+    <button class="btn-add" @click="addTag">新增{{ props.label }}</button>
+    <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </div>
 </template>
