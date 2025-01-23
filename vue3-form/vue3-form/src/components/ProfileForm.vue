@@ -46,40 +46,17 @@ const emits = defineEmits([
   'reset',
 ])
 
-// const test = computed(() => {
-//   try {
-//     return props.form.hobbies.includes(choice)
-//   } catch (error) {
-//     console.log(props.form)
-//   }
-// })
-
 // hobby options
 const inputHobby = ref('') // 因為是選配所以在外面處理
-// function addHobbyOption() {
-//   if (inputHobby.value.trim() === '') {
-//     return
-//   }
-
-//   // choices.value.push(inputHobby.value)
-//   const newHobby = inputHobby.value
-
-//   inputHobby.value = null
-
-//   return newHobby
-// }
 
 // ???這些computed為什麼不是在有資料的地方處理?
 const showedHobbies = computed(() => {
   return hobbies.value.join(', ')
 })
 
-// tag
 const showedTags = computed(() => {
   return props.form.tags.join(', ')
 })
-
-// password
 
 const oneLineNote = computed(() => {
   const noteLines = note.value.split('\n')
@@ -88,7 +65,7 @@ const oneLineNote = computed(() => {
 
 // validation
 const validations = {
-  email: (value) => {
+  emailFormat: (value) => {
     if (!value) return '請勿空白'
 
     const regex =
@@ -100,7 +77,7 @@ const validations = {
 
     return true
   },
-  password: (value) => {
+  required: (value) => {
     const requiredMessage = '請勿空白'
     if (value === undefined || value === null) return requiredMessage
     if (!String(value).length) return requiredMessage
@@ -109,34 +86,23 @@ const validations = {
   },
 }
 
-useForm({
-  validationSchema: validations,
+const validationSchema = {
+  姓名: validations.required,
+  email: validations.emailFormat,
+  password: validations.required,
+}
+
+const { handleSubmit, errors } = useForm({
+  validationSchema: validationSchema,
 })
 
-const { value: emailValue, errorMessage: emailError } = useField('email')
-const { value: passwordValue, errorMessage: passwordError } = useField('password')
-
-function updateEmail(event) {
-  emailValue.value = event
-
-  return emits('update:email', {
-    ...props.form,
-    email: event,
-  })
-}
-
-function updatePassword(event) {
-  passwordValue.value = event
-
-  return emits('update:password', {
-    ...props.form,
-    password: event,
-  })
-}
+const submit = handleSubmit((values) => {
+  console.log(values)
+})
 </script>
 
 <template>
-  <form @submit.prevent="emits('submit')" @reset.prevent="emits('reset')">
+  <form @submit.prevent="emits('submit', submit)" @reset.prevent="emits('reset')">
     <InputString
       placeholder="橘子"
       label="姓名"
@@ -148,7 +114,7 @@ function updatePassword(event) {
           name: $event,
         })
       "
-      error="請勿空白"
+      :error="errors['姓名']"
     ></InputString>
 
     <InputString
@@ -264,14 +230,24 @@ function updatePassword(event) {
       type="email"
       placeholder="tangerine@15t.com"
       :value="props.form.email"
-      @input="updateEmail"
-      :error="emailError"
+      @input="
+        emits('update:email', {
+          ...props.form,
+          email: $event,
+        })
+      "
+      :error="errors.email"
     ></InputString>
 
     <InputPassword
       :value="props.form.password"
-      @input="updatePassword"
-      :error="passwordError"
+      @input="
+        emits('update:password', {
+          ...props.form,
+          password: $event,
+        })
+      "
+      :error="errors.password"
     ></InputPassword>
 
     <InputNumber

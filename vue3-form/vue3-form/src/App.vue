@@ -79,7 +79,7 @@ function getNowTime() {
       @update:feeling="form = $event"
       @update:note="form = $event"
       @update:imageUrl="form = $event"
-      @submit="submitForm"
+      @submit="$event()"
       @reset=""
     ></ProfileForm>
 

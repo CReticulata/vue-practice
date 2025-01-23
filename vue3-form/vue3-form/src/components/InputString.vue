@@ -2,6 +2,7 @@
 import UniqueID from '../features/UniqueID'
 import ErrorMessage from '../components/ErrorMessage.vue'
 import { ref } from 'vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
   label: {
@@ -29,6 +30,14 @@ const props = defineProps({
 const emits = defineEmits(['input'])
 
 const uuid = ref(UniqueID().getID())
+
+const { value: value } = useField(() => props.label)
+
+function updateValue(event) {
+  value.value = event.target.value
+
+  return emits('input', event.target.value)
+}
 </script>
 <template>
   <div class="input-field">
@@ -38,7 +47,7 @@ const uuid = ref(UniqueID().getID())
       :type="props.type"
       :placeholder="props.placeholder"
       :value="props.value"
-      @input="emits('input', $event.target.value)"
+      @input="updateValue"
     />
     <ErrorMessage v-if="props.error">{{ props.error }}</ErrorMessage>
   </div>

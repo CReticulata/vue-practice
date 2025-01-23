@@ -2,6 +2,7 @@
 import ErrorMessage from '../components/ErrorMessage.vue'
 import { watch } from 'vue'
 import { ref } from 'vue'
+import { useField } from 'vee-validate'
 
 const props = defineProps({
   value: {
@@ -30,16 +31,19 @@ const typeOptions = ['password', 'text']
 watch(isShow, (newValue) => {
   type.value = typeOptions[Number(newValue)]
 })
+
+const { value: passwordValue } = useField('password')
+
+function updatePassword(event) {
+  passwordValue.value = event.target.value
+
+  return emits('input', event.target.value)
+}
 </script>
 <template>
   <div class="input-field">
     <label for="password">請輸入密碼：</label>
-    <input
-      id="password"
-      :type="type"
-      :value="props.value"
-      @input="emits('input', $event.target.value)"
-    />
+    <input id="password" :type="type" :value="props.value" @input="updatePassword" />
     <span class="icon-eye" v-if="!isShow" @click="isShow = !isShow">
       <i class="fa-solid fa-eye"></i>
     </span>
