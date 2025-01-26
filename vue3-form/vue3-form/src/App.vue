@@ -50,6 +50,12 @@ function getNowTime() {
   const nowMinute = addLeadingZero(now.getMinutes())
   return `${nowHour}:${nowMinute}`
 }
+
+function onSubmit(event) {
+  console.log(event)
+
+  // API
+}
 </script>
 
 <template>
@@ -79,7 +85,7 @@ function getNowTime() {
       @update:feeling="form = $event"
       @update:note="form = $event"
       @update:imageUrl="form = $event"
-      @submit="$event()"
+      @submit="onSubmit"
       @reset=""
     ></ProfileForm>
 

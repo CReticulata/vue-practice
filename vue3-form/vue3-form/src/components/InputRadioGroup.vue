@@ -28,10 +28,10 @@ const props = defineProps({
 
 const emits = defineEmits(['change'])
 
-const { value: value } = useField(() => props.legend)
+const { value: fieldValue } = useField(() => props.name)
 
 function updateValue(event) {
-  value.value = event
+  fieldValue.value = event
 
   return emits('change', event)
 }

@@ -5,6 +5,10 @@ import UniqueID from '@/features/UniqueID'
 import { useField } from 'vee-validate'
 
 const props = defineProps({
+  name: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     default: '',
@@ -27,10 +31,10 @@ const emits = defineEmits(['change'])
 
 const uuid = ref(UniqueID().getID())
 
-const { value: value } = useField(() => props.label)
+const { value: fieldValue } = useField(() => props.name)
 
 function updateValue(event) {
-  value.value = event.target.value
+  fieldValue.value = event.target.value
 
   return emits('change', event.target.value)
 }

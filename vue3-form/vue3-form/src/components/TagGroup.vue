@@ -4,6 +4,10 @@ import ErrorMessage from '../components/ErrorMessage.vue'
 import { useField } from 'vee-validate'
 
 const props = defineProps({
+  name: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     default: '標籤',
@@ -41,10 +45,10 @@ function removeTag(index) {
   return emits('delete', [...props.value.slice(0, index), ...props.value.slice(index + 1)])
 }
 
-const { value: value } = useField(() => props.label)
+const { value: fieldValue } = useField(() => props.name)
 
 function updateValue(newValue) {
-  value.value = newValue
+  fieldValue.value = newValue
 }
 </script>
 <template>

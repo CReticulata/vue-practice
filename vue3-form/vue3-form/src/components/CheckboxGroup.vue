@@ -4,6 +4,10 @@ import ErrorMessage from '../components/ErrorMessage.vue'
 import { useField } from 'vee-validate'
 
 const props = defineProps({
+  name: {
+    type: String,
+    default: '',
+  },
   label: {
     type: String,
     default: '',
@@ -24,7 +28,7 @@ const props = defineProps({
 
 const emits = defineEmits(['change', 'create:options'])
 
-function onChange(event) {
+function changeValue(event) {
   const choice = event.target.value
   if (props.value.includes(choice)) {
     const index = props.value.findIndex((item) => item === choice)
@@ -55,12 +59,12 @@ function onAddOption(options) {
   }
 }
 
-const { value: value } = useField(() => props.label)
+const { value: fieldValue } = useField(() => props.name)
 
-function updateValue(event) {
-  value.value = onChange(event)
+function onChange(event) {
+  fieldValue.value = changeValue(event)
 
-  return emits('change', onChange(event))
+  return emits('change', changeValue(event))
 }
 </script>
 
@@ -72,7 +76,7 @@ function updateValue(event) {
         :id="choice"
         type="checkbox"
         :checked="props.value.includes(choice)"
-        @change="updateValue"
+        @change="onChange"
         :value="choice"
       />
       <label :for="choice">{{ choice }}</label>

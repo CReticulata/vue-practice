@@ -66,39 +66,42 @@ const oneLineNote = computed(() => {
 
 // validation
 const validationSchema = object({
-  姓名: string().required('請勿空白'),
-  電話: string().required('請勿空白'),
-  日期: string().required('請勿空白'),
-  時間: string().required('請勿空白'),
-  生理性別: string().required('請勿空白'),
-  興趣: array().length(1, '請勿空白').required('請勿空白'),
-  標籤: array().length(1, '請勿空白').required('請勿空白'),
-  年齡: number().min(0, '不得低於0').required('請勿空白'),
-  居住地: string().required('請勿空白'),
+  name: string().required('請勿空白'),
+  phone: string().required('請勿空白'),
+  date: string().required('請勿空白'),
+  time: string().required('請勿空白'),
+  gender: string().required('請勿空白'),
+  hobbies: array().min(1, '必須至少選擇一項'),
+  tags: array().min(1, '必須至少新增一項'),
+  age: number().min(0, '不得低於0').required('請勿空白'),
+  residence: string().required('請勿空白'),
   email: string().email('輸入的email格式錯誤').required('請勿空白'),
   password: string().required('請勿空白'),
-  體驗感受: number().required('請勿空白'),
-  備註: string(),
-  檔案: string().required('請勿空白'),
+  feeling: number().required('請勿空白'),
+  note: string(),
+  imageUrl: string().required('請勿空白'),
 })
 
 const { handleSubmit, errors } = useForm({
   validationSchema: validationSchema,
   initialValues: {
-    日期: props.form.date,
-    時間: props.form.time,
-    體驗感受: 3,
+    date: props.form.date,
+    time: props.form.time,
+    feeling: 3,
   },
 })
 
-const submit = handleSubmit((values) => {
+const onSubmit = handleSubmit((values) => {
   console.log(values)
+
+  return emits('submit', values)
 })
 </script>
 
 <template>
-  <form @submit.prevent="emits('submit', submit)" @reset.prevent="emits('reset')">
+  <form @submit.prevent="onSubmit" @reset.prevent="emits('reset')">
     <InputString
+      name="name"
       placeholder="橘子"
       label="姓名"
       type="text"
@@ -109,10 +112,11 @@ const submit = handleSubmit((values) => {
           name: $event,
         })
       "
-      :error="errors['姓名']"
+      :error="errors['name']"
     ></InputString>
 
     <InputString
+      name="phone"
       placeholder="0912345678"
       label="電話"
       type="tel"
@@ -123,10 +127,11 @@ const submit = handleSubmit((values) => {
           phone: $event,
         })
       "
-      :error="errors['電話']"
+      :error="errors['phone']"
     ></InputString>
 
     <InputString
+      name="date"
       label="日期"
       type="date"
       :value="props.form.date"
@@ -136,10 +141,11 @@ const submit = handleSubmit((values) => {
           date: $event,
         })
       "
-      :error="errors['日期']"
+      :error="errors['date']"
     ></InputString>
 
     <InputString
+      name="time"
       label="時間"
       type="time"
       :value="props.form.time"
@@ -149,7 +155,7 @@ const submit = handleSubmit((values) => {
           time: $event,
         })
       "
-      :error="errors['時間']"
+      :error="errors['time']"
     ></InputString>
 
     <InputRadioGroup
@@ -163,10 +169,11 @@ const submit = handleSubmit((values) => {
           gender: $event,
         })
       "
-      :error="errors['生理性別']"
+      :error="errors['gender']"
     ></InputRadioGroup>
 
     <CheckboxGroup
+      name="hobbies"
       label="興趣"
       :value="props.form.hobbies"
       :options="hobbyOptions"
@@ -177,7 +184,7 @@ const submit = handleSubmit((values) => {
         })
       "
       v-slot="{ onAddOption }"
-      :error="errors['興趣']"
+      :error="errors['hobbies']"
     >
       <div class="input-field">
         <input type="text" v-model="inputHobby" />
@@ -194,14 +201,16 @@ const submit = handleSubmit((values) => {
     </CheckboxGroup>
 
     <TagGroup
+      name="tags"
       :value="props.form.tags"
       @create="emits('update:tags', { ...props.form, tags: $event })"
       @delete="emits('update:tags', { ...props.form, tags: $event })"
-      :error="errors['標籤']"
+      :error="errors['tags']"
     >
     </TagGroup>
 
     <InputSelect
+      name="residence"
       label="居住地"
       :value="props.form.residence"
       @change="
@@ -211,10 +220,11 @@ const submit = handleSubmit((values) => {
         })
       "
       :options="props.regionOptions"
-      :error="errors['居住地']"
+      :error="errors['residence']"
     ></InputSelect>
 
     <InputNumber
+      name="age"
       label="年齡"
       type="number"
       min="0"
@@ -225,11 +235,12 @@ const submit = handleSubmit((values) => {
           age: $event,
         })
       "
-      :error="errors['年齡']"
+      :error="errors['age']"
     >
     </InputNumber>
 
     <InputString
+      name="email"
       label="email"
       type="email"
       placeholder="tangerine@15t.com"
@@ -240,7 +251,8 @@ const submit = handleSubmit((values) => {
           email: $event,
         })
       "
-      :error="errors.email"
+      :error="errors['email']"
+      isLazyValidate
     ></InputString>
 
     <InputPassword
@@ -255,6 +267,7 @@ const submit = handleSubmit((values) => {
     ></InputPassword>
 
     <InputNumber
+      name="feeling"
       label="體驗感受"
       type="range"
       min="1"
@@ -266,12 +279,13 @@ const submit = handleSubmit((values) => {
           feeling: $event,
         })
       "
-      :error="errors['體驗感受']"
+      :error="errors['feeling']"
     >
       <span>{{ props.form.feeling }}分</span>
     </InputNumber>
 
     <InputTextarea
+      name="note"
       label="備註"
       rows="3"
       :value="props.form.note"
@@ -281,10 +295,11 @@ const submit = handleSubmit((values) => {
           note: $event,
         })
       "
-      :error="errors['備註']"
+      :error="errors['note']"
     ></InputTextarea>
 
     <InputFile
+      name="imageUrl"
       label="檔案"
       :imageUrl="props.form.imageUrl"
       @change="
@@ -293,7 +308,7 @@ const submit = handleSubmit((values) => {
           imageUrl: $event,
         })
       "
-      :error="errors['檔案']"
+      :error="errors['imageUrl']"
     >
     </InputFile>
 

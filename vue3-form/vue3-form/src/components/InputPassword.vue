@@ -5,6 +5,10 @@ import { ref } from 'vue'
 import { useField } from 'vee-validate'
 
 const props = defineProps({
+  name: {
+    type: String,
+    default: '',
+  },
   value: {
     type: String,
     default: '',
@@ -32,10 +36,10 @@ watch(isShow, (newValue) => {
   type.value = typeOptions[Number(newValue)]
 })
 
-const { value: passwordValue } = useField('password')
+const { value: fieldValue } = useField('password')
 
 function updatePassword(event) {
-  passwordValue.value = event.target.value
+  fieldValue.value = event.target.value
 
   return emits('input', event.target.value)
 }
