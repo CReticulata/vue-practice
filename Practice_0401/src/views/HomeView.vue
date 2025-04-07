@@ -30,6 +30,11 @@ const subcriptionCards = ref([
     subscriptionStatus: 'unsubscribed',
   },
 ])
+
+function subscribe(index) {
+  // do sth
+  console.log(index)
+}
 </script>
 
 <template>
@@ -44,6 +49,7 @@ const subcriptionCards = ref([
       :discount="card.discount"
       :isRecommended="card.isRecommended"
       :subscriptionStatus="card.subscriptionStatus"
+      @subscribe="() => subscribe(index)"
     ></SubscriptionCard>
   </div>
 </template>
