@@ -23,7 +23,7 @@ const router = createRouter({
       beforeEnter: async (to) => {
         const page = to.query.page || 1
 
-        await EventService.getEvents(2, page)
+        return await EventService.getEvents(2, page)
           .then((response) => {
             // NProgress.start()
             console.log(page)
@@ -51,15 +51,13 @@ const router = createRouter({
       name: 'EventLayout',
       component: EventLayout,
       beforeEnter: async (to) => {
-        await EventService.getEvent(to.params.id)
+        return await EventService.getEvent(to.params.id)
           .then((response) => {
             console.log('Get response successfully.')
 
             GStore.event = response.data
           })
           .catch((error) => {
-            console.log(error)
-
             if (error.status === 404) {
               return { name: '404Resource', params: { resource: to.params.id } }
             } else {
@@ -87,22 +85,13 @@ const router = createRouter({
             }
           },
         },
-        {
-          path: 'edit',
-          name: 'EventEdit',
-          component: EventEdit,
-          meta: {
-            requireAuth: false,
-          },
-        },
+        { path: 'edit', name: 'EventEdit', component: EventEdit, meta: { requireAuth: false } },
       ],
     },
     {
       path: '/event/:afterEvent(.*)',
       redirect: (to) => {
-        return {
-          path: `/events/${to.params.afterEvent}`,
-        }
+        return { path: `/events/${to.params.afterEvent}` }
       },
     },
     {
@@ -116,23 +105,9 @@ const router = createRouter({
       component: AboutView,
       meta: { transitionName: 'rightToLeft' },
     },
-    {
-      path: '/:catchAll(.*)',
-      name: 'NotFound',
-      component: NotFoundComponent,
-    },
-    {
-      path: '/404/:resource',
-      name: '404Resource',
-      component: NotFoundComponent,
-      props: true,
-    },
-    {
-      path: '/network-error',
-      name: 'NetworkError',
-      component: NetworkError,
-      props: true,
-    },
+    { path: '/:catchAll(.*)', name: 'NotFound', component: NotFoundComponent },
+    { path: '/404/:resource', name: '404Resource', component: NotFoundComponent, props: true },
+    { path: '/network-error', name: 'NetworkError', component: NetworkError, props: true },
   ],
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
