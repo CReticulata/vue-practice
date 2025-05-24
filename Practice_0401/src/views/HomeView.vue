@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import SubscriptionCard from '@/components/SubscriptionCard.vue'
 import SegmentedBtns from '@/components/SegmentedBtns.vue'
+import MyList from '@/components/MyList.vue'
 
 const subcriptionCards = ref([
   {
@@ -32,11 +33,21 @@ const subcriptionCards = ref([
   },
 ])
 
-const segmentedBtn = ref('currentMonth')
+const selectedMonth = ref('currentMonth')
 
-const segmentedBtns = computed(() => {
+const segmentedBtns = getSegmentedBtns()
+// year
+function getSegmentedBtns() {
   const now = new Date()
   const currentMonth = now.getMonth() + 1
+  let lastMonth = currentMonth - 1
+  let lastTwoMonth = currentMonth - 2
+  if (lastMonth < 1) {
+    lastMonth += 12
+  }
+  if (lastTwoMonth < 1) {
+    lastTwoMonth += 12
+  }
 
   return [
     {
@@ -45,19 +56,31 @@ const segmentedBtns = computed(() => {
     },
     {
       name: 'lastMonth',
-      label: `${currentMonth - 1} 月 (上個月)`,
+      label: `${lastMonth} 月 (上個月)`,
     },
     {
       name: 'lastTwoMonth',
-      label: `${currentMonth - 2} 月 (上上個月)`,
+      label: `${lastTwoMonth} 月 (上上個月)`,
     },
   ]
-})
+}
 
 function subscribe(index) {
   // do sth
   console.log(index)
 }
+
+const users = [
+  { id: 1, name: '張三', email: 'zhangsan@example.com', age: 30 },
+  { id: 2, name: '李四', email: 'lisi@example.com', age: 25 },
+  { id: 3, name: '王五', email: 'wangwu@example.com', age: 35 },
+]
+
+const products = [
+  { id: 101, name: '筆記型電腦', price: 1200, stock: 50 },
+  { id: 102, name: '無線滑鼠', price: 25, stock: 200 },
+  { id: 103, name: '機械鍵盤', price: 80, stock: 100 },
+]
 </script>
 
 <template>
@@ -76,9 +99,32 @@ function subscribe(index) {
         @subscribe="() => subscribe(index)"
       ></SubscriptionCard>
     </div>
-    <div class="segmented-btns">
-      <SegmentedBtns v-model="segmentedBtn" :btns="segmentedBtns"></SegmentedBtns>
+    <div class="layout__segmented-btns">
+      <SegmentedBtns v-model="selectedMonth" :btns="segmentedBtns"></SegmentedBtns>
     </div>
+
+    <MyList :items="users" title="用戶列表">
+      <template v-slot:item="slotProps">
+        <div class="user-card">
+          <h3>{{ slotProps.item.name }}</h3>
+          <p>Email: {{ slotProps.item.email }}</p>
+          <p>Age: {{ slotProps.item.age }}</p>
+        </div>
+      </template>
+    </MyList>
+    <hr />
+
+    <MyList :items="products" title="產品列表">
+      <template v-slot:item="{ item }">
+        <div class="product-item">
+          <h4>{{ item.name }}</h4>
+          <p>價格: ${{ item.price }}</p>
+          <p>庫存: {{ item.stock }}</p>
+        </div>
+      </template>
+    </MyList>
+
+    <hr />
   </div>
 </template>
 
@@ -87,7 +133,13 @@ function subscribe(index) {
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  &__segmented-btns {
+    padding: 4px 0;
+    width: 420px;
+  }
 }
+
 .subcription-cards {
   display: flex;
   flex-wrap: wrap;
@@ -96,8 +148,17 @@ function subscribe(index) {
   align-items: flex-end;
 }
 
-.segmented-btns {
-  padding: 4px 0;
-  width: 420px;
+.user-card {
+  background-color: #f0f8ff;
+  border-left: 5px solid #41b883;
+  padding: 10px;
+  text-align: left;
+}
+
+.product-item {
+  background-color: #fff8e1;
+  border-left: 5px solid #ffc107;
+  padding: 10px;
+  text-align: left;
 }
 </style>
