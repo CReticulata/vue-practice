@@ -35,9 +35,10 @@ const subcriptionCards = ref([
 
 const selectedMonth = ref('currentMonth')
 
-const segmentedBtns = getSegmentedBtns()
+// const segmentedBtns = getSegmentedBtns()
 // year
 function getSegmentedBtns() {
+  // 跟日期相關的都用 Dayjs 處理就好
   const now = new Date()
   const currentMonth = now.getMonth() + 1
   let lastMonth = currentMonth - 1
@@ -100,7 +101,8 @@ const products = [
       ></SubscriptionCard>
     </div>
     <div class="layout__segmented-btns">
-      <SegmentedBtns v-model="selectedMonth" :btns="segmentedBtns"></SegmentedBtns>
+      <!-- <SegmentedBtns v-model="selectedMonth" :btns="segmentedBtns"></SegmentedBtns> -->
+      <SegmentedBtns v-model:tab="selectedMonth" :btns="getSegmentedBtns()"></SegmentedBtns>
     </div>
 
     <MyList :items="users" title="用戶列表">

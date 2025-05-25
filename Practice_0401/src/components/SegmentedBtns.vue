@@ -6,18 +6,19 @@ const props = defineProps({
   },
 })
 
-const value = defineModel({
-  type: String,
-})
+// const modelValue = defineModel({
+//   type: String,
+// })
+
+const modelTab = defineModel('tab', { type: String })
 </script>
 
 <template>
   <!-- 確定 q-tabs 可否改動樣式即可 -->
   <!-- 小心 blue-2 變數的使用 -->
   <q-tabs
-    v-model="value"
+    v-model="modelTab"
     dense
-    class="btns"
     indicator-color="transparent"
     active-bg-color="blue-2"
     align="justify"
@@ -26,10 +27,9 @@ const value = defineModel({
     <q-tab
       v-for="(btn, index) in props.btns"
       :key="index"
-      class="btns__btn"
       :name="btn.name"
       :label="btn.label"
-      :icon="value === btn.name ? 'done' : undefined"
+      :icon="modelTab === btn.name ? 'done' : undefined"
     ></q-tab>
   </q-tabs>
 </template>
