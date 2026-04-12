@@ -1,16 +1,19 @@
 {
   "name": "practice-0401",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write src/",
-    "prepare": "husky"
+    "prepare": "husky",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@antfu/eslint-config": "^4.13.2",
     "@quasar/extras": "^1.16.17",
     "dayjs": "^1.11.13",
     "pinia": "^3.0.1",

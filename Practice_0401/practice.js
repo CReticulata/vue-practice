@@ -13,7 +13,7 @@ const users = [
 
 // filter + map
 const cardsByFilterAndMap = users
-  .filter((user) => user.isPosted)
+  .filter(user => user.isPosted)
   .map((user) => {
     return {
       title: user.name,
@@ -46,7 +46,8 @@ console.log(cardsByReduce)
 const groupedUsers = users.reduce((groupedUsers, user, i) => {
   if (!groupedUsers[user.name]) {
     groupedUsers[user.name] = [user]
-  } else {
+  }
+  else {
     groupedUsers[user.name] = [...groupedUsers[user.name], user]
   }
 
@@ -54,3 +55,12 @@ const groupedUsers = users.reduce((groupedUsers, user, i) => {
 }, {})
 
 console.log(groupedUsers)
+
+function getPerson() {
+  const x = true
+  if (x) {
+    return 'PersonA'
+  }
+
+  return 'PersonB'
+}
